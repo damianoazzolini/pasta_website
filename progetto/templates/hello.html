@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Page Title</title>
+</head>
+<body>
+
+<h1>Am I over with this????</h1>
+<p>This is a paragraph.</p>
+
+<form method="POST">
+  
+    <label for="inputQ"> Query (string) </label><br>
+    <input type="text" id="inputQ" name="inputQ" placeholder="string" value={{ request.form['inputQ'] }}><br>
+  
+    <label for="inputPr"> altro: </label><br>
+    <textarea rows="10" cols="60" name="inputA" placeholder="scrivi qui">{{ request.form['inputA'] }}</textarea><br><br>
+
+    <input type="submit" value="Submit"><br><br>
+
+    <textarea id="out" name="out" placeholder="output shown here">{{CodeOut}}</textarea>
+</form>
+
+{% for message in get_flashed_messages() %}
+<div class="alert">{{ message }}</div>
+{% endfor %}
+
+</body>
+</html>
