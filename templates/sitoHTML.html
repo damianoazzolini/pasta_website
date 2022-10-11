@@ -51,8 +51,8 @@
     
     <input type="radio" id="MapInf" name="options" value="Map Inference" onclick="ToggleLevel_1();ToggleLevel_3();">
     <label for="MapInf"> Map Inference </label> &emsp;&emsp;&emsp;&emsp;
-    <input type="checkbox" id="Brave" name="Brave" value="True">
-    <label for="Brave"> brave (false default) </label>
+    <input type="checkbox" id="Upper" name="Upper" value="True">
+    <label for="Upper"> upper (false default) </label>
     <br><br>
 
     <input type="radio" id="Abd" name="options" value="Abduction" onclick="ToggleLevel_1();ToggleLevel_3();">
@@ -89,7 +89,7 @@
     var MapInference = document.getElementById("MapInf");
     var Abduction = document.getElementById("Abd");
     var ParameterLearning = document.getElementById("PL");
-    var Brave = document.getElementById("Brave");
+    var Upper = document.getElementById("Upper");
     var fillQuery = document.getElementById("fillQuery");
 
     function ToggleLevel_1 () {        

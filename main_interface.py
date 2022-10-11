@@ -3,6 +3,42 @@ import sys
 sys.path.append("venv/lib/python3.8/site-packages/pasta") #otherwise flask won't find it
 import pasta_solver
 
+#####################################################################
+#                workaround for printing results                    #
+#####################################################################
+from io import StringIO 
+import sys
+
+class Capturing(list):                    #associate print() to a list
+    def __enter__(self):
+        self._stdout = sys.stdout
+        sys.stdout = self._stringio = StringIO()
+        return self
+    def __exit__(self, *args):
+        self.extend(self._stringio.getvalue().splitlines())
+        del self._stringio    # free up some memory
+        sys.stdout = self._stdout
+
+def external_method():              #redirecting pasta lib stdout
+  print ("print something out, don't return")
+
+class MyBuffer(object):
+  def __init__(self):
+    self.buffer = []
+  def write(self, *args, **kwargs):
+    self.buffer.append(args)
+
+import sys
+old_stdout = sys.stdout
+sys.stdout = MyBuffer()
+external_method()
+my_buffer, sys.stdout = sys.stdout, old_stdout
+print (my_buffer.buffer)
+#####################################################################
+#                workaround for printing results                    #
+#####################################################################
+
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your secret key'
 
@@ -20,7 +56,7 @@ def sitoHTML():
         #nSamples = request.form['options']          #nSamples
         #RadioButton2 = str(request.form['AI_options'])   #radio buttons for Appr Inference
         #Blocks = request.form['Blocks']                 #Blocks
-        #Brave = request.form['Brave']               #brave for last 3 RButton
+        #Upper = request.form['Upper']               #upper for last 3 RButton
         
         #RadioButton2=False
         #if request.form.get("AI_options"):
@@ -88,11 +124,11 @@ def sitoHTML():
         elif (RadioButton1 == 'Map Inference'):
             solver = pasta_solver.Pasta('tmpFile.lp', Query)
             
-            if request.form.get("Brave"):  #brave for last 3 Button
-                #Brave = True
+            if request.form.get("Upper"):  #upper for last 3 Button
+                #Upper = True
                 max_p, atoms_list = solver.upper_mpe_inference() #may cause 'EMPY_RESPONSE' error if not used properly
             else:
-                #Brave=False
+                #Upper=False
                 max_p, atoms_list = solver.map_inference()
 
             map_op = len(atoms_list) > 0 and len(atoms_list[0]) == len(solver.interface.prob_facts_dict)
@@ -107,16 +143,16 @@ def sitoHTML():
             
             solver = pasta_solver.Pasta('tmpFile.lp', Query)
 
-            if request.form.get("Brave"):  #brave for last 3 Button
-                Brave = True
-                lp, up, abd_explanations = solver.abduction()
+            if request.form.get("Upper"):  #upper for last 3 Button
+                Upper = True
             else:
-                Brave=False
-                lp, up, abd_explanations = solver.abduction()
+                Upper=False
+                
+            lp, up, abd_explanations = solver.abduction()
 
             abd_exp_no_dup = pasta_solver.Pasta.remove_dominated_explanations(abd_explanations)
             if len(abd_exp_no_dup) > 0 and up != 0:
-                if Brave:
+                if Upper:
                     answer= f"Upper probability for the query: {up}"
                 else:
                     answer = ("Lower probability for the query " + Query + ": " + str(lp) + 
@@ -127,19 +163,16 @@ def sitoHTML():
 
 #------------------------PARAMETER LEARNING-------------------------
         elif (RadioButton1 == 'Parameter Learning'):
-            if (Query == 'none'):
-                solver = pasta_solver.Pasta('tmpFile.lp')
-            else:
-                solver = pasta_solver.Pasta('tmpFile.lp', Query)
+            solver = pasta_solver.Pasta('tmpFile.lp', Query)
 
-            if request.form.get("Brave"):  #brave for last 3 Button
-                #Brave = True
-                solver.parameter_learning()
+            if request.form.get("Upper"):  #upper for last 3 Button
+                Upper = True
             else:
-                #Brave=False
-                solver.parameter_learning()
+                Upper=False
 
-            answer = "parameter learning selected:\nno output"
+            with Capturing() as answer:
+                    solver.parameter_learning(Upper)
+
             return render_template('sitoHTML.html',CodeOut = answer)
 
         else:
