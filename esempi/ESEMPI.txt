@@ -1,0 +1,45 @@
+-EXACT INFERENCE
+bird_4_cond.lp
+query: fly
+
+	query
+	(evidence-optional)
+
+
+-APPROXIMATE INFERENCE
+bird_4.lp
+query: fly(1)
+
+
+	query
+	(evidence-optional)
+	nSample (lascia 1000)
+	(radio buttons)
+
+
+-MAP INFERENCE
+color_map.lp
+query: win
+
+	query
+	(brave)
+
+
+-ABDUCTION
+bird_4_abd_prob.lp
+query: fly(1)
+
+	query
+	(brave)
+
+
+-PARAMETER LEARNING
+	(brave)
+
+
+
+COSE DA CHIEDERE
+-se possibile aggiungere delle stringhe singole per recuperare i risultati
+altrimenti devo riscrivere il codice per la stampa
+-PARAMETER LEARNING non ha output??? come si comporta nel caso Brave?
+-APPROXIMATE INFERENCE: come si passano gli argomenti per la scelta dei 3 button extra?
