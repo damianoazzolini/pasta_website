@@ -1,2 +1,2 @@
-pasta==1.0.0
+git+https://github.com/damianoazzolini/pasta@master#egg=pasta
 Flask
