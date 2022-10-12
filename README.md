@@ -1,2 +1,10 @@
-# ProvaProgettoPastaWebsite
-dovrebbe essere il file readme. Funzionaaa
+# PastaWebsite
+NOT READY YET
+
+TO DO LIST
+-database
+-tests
+
+DONE
+-main interface
+-static secondary pages
