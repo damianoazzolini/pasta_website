@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>PASTA WEBSITE</title>
+</head>
+<body>
+
+<h1>EXAMPLES</h1>
+
+<h3>
+    <a href="..">HOME</a>
+    |_/\_|
+    <a href="documentation.html">Documentation</a> --
+    <a href="about.html">About</a> -- 
+    Examples
+    |_/\_|
+</h3>
+
+FILE 1 - bird_4_cond.lp<br><br>
+<textarea rows="20" cols="80" name="file1" id="file1" readonly>% there are 4 birds
+bird(1).
+bird(2).
+bird(3).
+bird(4).
+
+% the bird indexed by 1 flies with probability 0.7
+0.7::fly_w(1).
+
+% Conditional
+(fly(X) | bird(X))[0.6,1].
+
+% The conditional is equivalent to
+% 0{fly(X)}1:- bird(X).
+% :- #count{X:fly(X),bird(X)} = FB, #count{X:bird(X)} = B, 10*FB < 6*B.
+
+fly:- fly(1).
+fly:- fly_w(1).
+
+% Query: fly
+% Expected: lower 0.7, upper 1.0
+% That is, there are 2 worlds, 1 where fly(1) (the probabilistic
+% fact) is true, the other where it is false
+% The world with fly(1) contributes to both lower and upper 
+% probability with 0.7
+% For the other world, we need to consider the models: it has
+% 5 and the query is true in 4 of them, so we have a contribution
+% of 0.3 only to the upper probability.
+% Overall: upper 0.7 + 0.3 = 1, lower = 0.7</textarea><br>
+<input type="submit" value="copy to HOME" onclick="sendText(document.getElementById('file1').id)"><br><br>
+
+FILE 2 - bird_4.lp<br><br>
+<textarea rows="20" cols="80" name="file2" id="file2" readonly>% There are 4 birds (indexed with 1,2,3, and 4), each one with 
+% probability 0.5
+0.5::bird(1).
+0.5::bird(2).
+0.5::bird(3).
+0.5::bird(4).
+
+% A bird can fly or not fly
+0{fly(X)}1 :- bird(X).
+
+% Constraint: at least 60% of the birds fly
+:- #count{X:fly(X),bird(X)} = FB, #count{X:bird(X)} = B, 10*FB < 6*B.
+
+% A query can also be specified into the program with query/1
+% query(fly(1)).
+
+% Example query: fly(1)
+% What is the lower and the upper bound of the probability for fly(1)?
+% Expected: lower: 0.25, upper: 0.5</textarea><br>
+<input type="submit" value="copy to HOME" onclick="sendText(document.getElementById('file2').id)"><br><br>
+
+OTHER EXAMPLES SOON
+
+
+
+<script>
+    const url = ".."
+
+    function sendText(textID){
+        if(typeof(Storage)!=="undefined"){
+            var Program = document.getElementById(textID);
+            localStorage.textToHome = Program.value;
+            Program.innerHTML = localStorage.textToHome;
+        }
+        else {
+            Program.innerHTML="Sorry, your browser does not support web storage...";
+        }
+        location.href=url;
+    }
+
+
+</script>
+
+</body>
+</html>

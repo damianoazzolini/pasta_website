@@ -1,0 +1,3 @@
+[submodule "pasta"]
+	path = pasta
+	url = https://github.com/damianoazzolini/pasta

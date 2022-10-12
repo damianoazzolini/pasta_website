@@ -2,16 +2,24 @@
 <html>
 <head>
 <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-<title>Page Title</title>
+<title>PASTA WEBSITE</title>
 </head>
 <body>
-<h1>INSERT TITLE HERE</h1>
-<p>PARAGRAPH IF NEEDED</p>
+<h1>HOME - PASTA WEBSITE</h1>
+
+<h3>
+    HOME
+    |_/\_|
+    <a href="static/documentation.html">Documentation</a> --
+    <a href="static/about.html">About</a> --
+    <a href="static/examples.html">Examples</a>
+    |_/\_|
+</h3>
 
 <form method="POST">
     <!-- codice programma -->
     Input Code<br>
-    <textarea rows="10" cols="60" name="inputPr" placeholder="insert code here" required>{{ request.form['inputPr'] }}</textarea><br><br>
+    <textarea rows="10" cols="60" name="inputPr" id="inputPr" placeholder="insert code here" required>{{ request.form['inputPr'] }}</textarea><br><br>
 
     <!-- query -->
     <label for="inputQ"> Query (string) </label><br>
@@ -78,6 +86,7 @@
 {% endfor %}
 
 <script>
+    var ProgramText = document.getElementById("inputPr");
     var Query = document.getElementById("inputQ");
     var ApproximateInference = document.getElementById("AppInf");
     var Evidenza = document.getElementById("inputEv");
@@ -91,6 +100,13 @@
     var ParameterLearning = document.getElementById("PL");
     var Upper = document.getElementById("Upper");
     var fillQuery = document.getElementById("fillQuery");
+
+    if(typeof(Storage)!=="undefined" && localStorage.textToHome){
+        ProgramText.innerHTML=localStorage.textToHome;
+    }
+    else{
+        ProgramText.innerHTML="Sorry, your browser does not support web storage...";
+    }
 
     function ToggleLevel_1 () {        
         if (ApproximateInference.checked) {
