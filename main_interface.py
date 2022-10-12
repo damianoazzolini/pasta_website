@@ -4,7 +4,7 @@ sys.path.append("venv/lib/python3.8/site-packages/pasta") #otherwise flask won't
 import pasta_solver
 
 #####################################################################
-#                workaround for printing results                    #
+#      workaround for printing results on Parameter Learning        #
 #####################################################################
 from io import StringIO 
 import sys
@@ -20,7 +20,7 @@ class Capturing(list):                    #associate print() to a list
         sys.stdout = self._stdout
 
 def external_method():              #redirecting pasta lib stdout
-  print ("print something out, don't return")
+    print ("")
 
 class MyBuffer(object):
   def __init__(self):
@@ -35,40 +35,35 @@ external_method()
 my_buffer, sys.stdout = sys.stdout, old_stdout
 print (my_buffer.buffer)
 #####################################################################
-#                workaround for printing results                    #
+#      workaround for printing results on Parameter Learning        #
 #####################################################################
+
+class arguments: #for approximate inference
+    rejection : bool
+    mh : bool
+    gibbs : bool
+    block : int
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your secret key'
+app.config["SECRET_KEY"] = "your secret key"
 
-@app.route('/', methods=['POST','GET']) 
+@app.route("/", methods=["POST","GET"]) 
 def sitoHTML():
-    if request.method == 'GET': #show requested page with empty form
-        return render_template('sitoHTML.html')
+    if request.method == "GET": #show requested page with empty form
+        return render_template("sitoHTML.html")
 
-    elif request.method == 'POST': #get the input form and give back results
-        answer =''
-        ProgramCode = str(request.form['inputPr'])   #1 textbox
-        Query = str(request.form['inputQ'])          #2 textbox
-        Evidence = str(request.form['inputEv'])           #3 textbox
-        RadioButton1 = str(request.form['options'])  #one of 5 radio button
-        #nSamples = request.form['options']          #nSamples
-        #RadioButton2 = str(request.form['AI_options'])   #radio buttons for Appr Inference
-        #Blocks = request.form['Blocks']                 #Blocks
-        #Upper = request.form['Upper']               #upper for last 3 RButton
-        
-        #RadioButton2=False
-        #if request.form.get("AI_options"):
-        #    RadioButton2 = True
-
-        #if (not Evidence): #in teoria non funziona
-        #    Evidence = ''
+    elif request.method == "POST": #get the input form and give back results
+        answer =""
+        ProgramCode = str(request.form["inputPr"])   #1 textbox
+        Query = str(request.form["inputQ"])          #2 textbox
+        Evidence = str(request.form["inputEv"])           #3 textbox
+        RadioButton1 = str(request.form["options"])  #one of 5 radio button
 
         if (not RadioButton1):
-            flash('SELECT ONE OPTIONS!') #porbably not needed - handled by HTML page
-        if (not Query and RadioButton1!='Parameter Learning'):
-            flash('QUERY MUST BE FILLED')
+            flash("SELECT ONE OPTIONS!") #porbably not needed - handled by HTML page
+        if (not Query and RadioButton1!="Parameter Learning"):
+            flash("QUERY MUST BE FILLED")
 
 
         """ Sending the program as a string might cause some issues
@@ -77,56 +72,76 @@ def sitoHTML():
             created to get around this issue. The file is overwritten
             with any new POST call.
         """
-        tmpFile = open('tmpFile.lp','w') 
+        tmpFile = open("tmpFile.lp","w") 
         tmpFile.write(ProgramCode)
         tmpFile.close()
         
-#------------------------EXACT INFERENCE------------------------------
-        if (RadioButton1 == 'Exact Inference'):
+        #####################################################################
+        #                           EXACT INFERENCE                         #
+        #####################################################################
+        if (RadioButton1 == "Exact Inference"):
             if (not Evidence):
-                solver = pasta_solver.Pasta('tmpFile.lp', Query)
+                solver = pasta_solver.Pasta("tmpFile.lp", Query)
             else:
-                solver = pasta_solver.Pasta('tmpFile.lp', Query, Evidence)
+                solver = pasta_solver.Pasta("tmpFile.lp", Query, Evidence)
             
             lp, up = solver.inference()      
             answer = ("Lower probability for the query " + Query + ": " + str(lp) + 
-                    '\n' + "Upper probability for the query " +  Query + ": " + str(up))
-            return render_template('sitoHTML.html',CodeOut = answer)
+                    "\n" + "Upper probability for the query " +  Query + ": " + str(up))
+            return render_template("sitoHTML.html",CodeOut = answer)
 
-#------------------------APPROXIMATE INFERENCE------------------------
-        elif (RadioButton1 == 'Approximate Inference'):
+        #####################################################################
+        #                        APPROXIMATE INFERENCE                      #
+        #####################################################################
+        elif (RadioButton1 == "Approximate Inference"):
+            args = arguments
+            nSamples = int(request.form["nSamples"])                  #nSamples
 
-            if ((not Evidence) == False): 
-                Evidence = ''                      #per evitare che vengano richiesti se manca l'Evidence
-                RadioButton2 = str(request.form['AI_options'])  #radio button for Appr Inference
+            if (not Evidence):
+                Evidence = ""
+                args.rejection  = False
+                args.mh         = False
+                args.gibbs      = False
+                args.block      = 0
             else:
-                RadioButton2 = None
-            nSamples = request.form['options']                  #nSamples
+                RadioButton2 = str(request.form["AI_options"])  #radio button for Appr Inference        
+                if (RadioButton2 == "gibbs"):
+                    Blocks_string = str(request.form["Blocks"])
+                    args.rejection  = False
+                    args.mh         = False
+                    args.gibbs      = True
+                    args.block      = 0
+                    if ((not Blocks_string) == False):
+                        Blocks = int(Blocks_string)
+                        args.block  = Blocks
+                elif (RadioButton2 == "mh"):
+                    args.rejection  = False
+                    args.mh         = True
+                    args.gibbs      = False
+                    args.block      = 0
+                elif (RadioButton2 == "rejection"):
+                    args.rejection  = True
+                    args.mh         = False
+                    args.gibbs      = False
+                    args.block      = 0
+                else:
+                    answer = "ERRORR - approximate inference"
 
-            solver = pasta_solver.Pasta('tmpFile.lp', Query, Evidence)
-            
-            if (not RadioButton2):
-                lp, up = solver.approximate_solve()
-            else:
-                if (True):
-                    lp, up = solver.approximate_solve()
-                    
-                #elif (RadioButton2 == 'gibbs' and (not Blocks) == False):
-                #    Blocks = int(request.form['Blocks'])                 #Blocks
-                #    lp, up = solver.approximate_solve(RadioButton2,Blocks)  
-                #else:
-                #    lp, up = solver.approximate_solve(RadioButton2) 
+            solver = pasta_solver.Pasta("tmpFile.lp", Query, Evidence, False, False, nSamples)
+            lp, up = solver.approximate_solve(args)
             answer = ("Lower probability for the query " + Query + ": " + str(lp) + 
-                    '\n' + "Upper probability for the query " +  Query + ": " + str(up))
-            return render_template('sitoHTML.html',CodeOut = answer)
+                    "\n" + "Upper probability for the query " +  Query + ": " + str(up))
+            return render_template("sitoHTML.html",CodeOut = answer)
 
-#------------------------MAP INFERENCE-------------------------------
-        elif (RadioButton1 == 'Map Inference'):
-            solver = pasta_solver.Pasta('tmpFile.lp', Query)
+        #####################################################################
+        #                           MAP INFERENCE                           #
+        #####################################################################
+        elif (RadioButton1 == "Map Inference"):
+            solver = pasta_solver.Pasta("tmpFile.lp", Query)
             
             if request.form.get("Upper"):  #upper for last 3 Button
                 #Upper = True
-                max_p, atoms_list = solver.upper_mpe_inference() #may cause 'EMPY_RESPONSE' error if not used properly
+                max_p, atoms_list = solver.upper_mpe_inference()
             else:
                 #Upper=False
                 max_p, atoms_list = solver.map_inference()
@@ -136,12 +151,15 @@ def sitoHTML():
             answer = f"{map_or_mpe}: {max_p}\n{map_or_mpe} states: {len(atoms_list)}" + "\n"
             for i, el in enumerate(atoms_list):
                 answer += (f"State {i}: {el}") + "\n"
-            return render_template('sitoHTML.html',CodeOut = answer)
 
-#------------------------ABDUCTION----------------------------------
-        elif (RadioButton1 == 'Abduction'):
+            return render_template("sitoHTML.html",CodeOut = answer)
+
+        #####################################################################
+        #                               ABDUCTION                           #
+        #####################################################################
+        elif (RadioButton1 == "Abduction"):
             
-            solver = pasta_solver.Pasta('tmpFile.lp', Query)
+            solver = pasta_solver.Pasta("tmpFile.lp", Query)
 
             if request.form.get("Upper"):  #upper for last 3 Button
                 Upper = True
@@ -149,33 +167,37 @@ def sitoHTML():
                 Upper=False
                 
             lp, up, abd_explanations = solver.abduction()
-
             abd_exp_no_dup = pasta_solver.Pasta.remove_dominated_explanations(abd_explanations)
+            
             if len(abd_exp_no_dup) > 0 and up != 0:
                 if Upper:
                     answer= f"Upper probability for the query: {up}"
                 else:
                     answer = ("Lower probability for the query " + Query + ": " + str(lp) + 
-                        '\n' + "Upper probability for the query " +  Query + ": " + str(up))
+                        "\n" + "Upper probability for the query " +  Query + ": " + str(up))
             n_exp = sum(1 for ex in abd_exp_no_dup if len(ex) > 0)
-            answer += '\n' + f"Abductive explanations: {n_exp}"
-            return render_template('sitoHTML.html',CodeOut = answer)
+            answer += "\n" + f"Abductive explanations: {n_exp}"
+            
+            return render_template("sitoHTML.html",CodeOut = answer)
 
-#------------------------PARAMETER LEARNING-------------------------
-        elif (RadioButton1 == 'Parameter Learning'):
-            solver = pasta_solver.Pasta('tmpFile.lp', Query)
+        #####################################################################
+        #                         PARAMETER LEARNING                        #
+        #####################################################################
+        elif (RadioButton1 == "Parameter Learning"):
+            solver = pasta_solver.Pasta("tmpFile.lp", Query)
 
-            if request.form.get("Upper"):  #upper for last 3 Button
+            if request.form.get("Upper"):
                 Upper = True
             else:
                 Upper=False
 
             with Capturing() as answer:
-                    solver.parameter_learning(Upper)
+                solver.parameter_learning(Upper)
 
-            return render_template('sitoHTML.html',CodeOut = answer)
+            return render_template("sitoHTML.html",CodeOut = answer)
 
+        #####################################################################
         else:
-            return 'SOMETHING WENT WRONG: ERROR CODE(1)'
+            return "SOMETHING WENT WRONG: ERROR CODE(1)"
 
-    return 'SOMETHING WENT WRONG: ERROR CODE(2)'
+    return "SOMETHING WENT WRONG: ERROR CODE(2)"

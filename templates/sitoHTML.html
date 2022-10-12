@@ -44,7 +44,7 @@
         <input type="radio" id="GS" name="AI_options" value="gibbs" disabled="true" onclick="ToggleLevel_2()">
         <label for="GS"> Gibbs Sampling </label><br> &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
         <label for="Blocks"> blocks (int) </label>&emsp;
-        <input type="text" id="Blocks" name="Blocks" placeholder="int" disabled="true" value={{ request.form['Blocks'] }}>
+        <input type="text" id="Blocks" name="Blocks" placeholder="int" disabled="true" value="{{ request.form['Blocks'] }}">
 
         <br><br>
         <!-- END checkboxes for Approximate Inference -->
