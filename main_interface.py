@@ -44,9 +44,23 @@ class arguments: #for approximate inference
     gibbs : bool
     block : int
 
+def create_app():
+    app = Flask(__name__)
+    #app.config.from_pyfile(config_filename)
 
-app = Flask(__name__)
-app.config["SECRET_KEY"] = "your secret key"
+    #from yourapplication.model import db
+    #db.init_app(app)
+
+    #from yourapplication.views.admin import admin
+    #from yourapplication.views.frontend import frontend
+    #app.register_blueprint(admin)
+    #app.register_blueprint(frontend)
+
+    return app
+
+#app = Flask(__name__)
+#app.config["SECRET_KEY"] = "your secret key"
+app = create_app()
 
 @app.route("/", methods=["POST","GET"]) 
 def sitoHTML():
