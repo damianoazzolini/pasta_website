@@ -1,5 +1,5 @@
 import pytest
-from main_interface import create_app
+from flaskr.main_interface import create_app
 
 @pytest.fixture(scope='module')
 def test_client():
@@ -13,3 +13,5 @@ def test_client():
         # Establish an application context
         with flask_app.app_context():
             yield testing_client  # this is where the testing happens!
+
+    

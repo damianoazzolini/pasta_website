@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, flash, url_for, make_response
+from flask import render_template, request, flash, Blueprint, url_for, make_response
 import sys
 sys.path.append("venv/lib/python3.8/site-packages/pasta") #otherwise flask won't find it
 import pasta_solver
+from flaskr.__init__ import *
 
 #####################################################################
 #      workaround for printing results on Parameter Learning        #
@@ -44,25 +45,9 @@ class arguments: #for approximate inference
     gibbs : bool
     block : int
 
-def create_app():
-    app = Flask(__name__)
-    #app.config.from_pyfile(config_filename)
+bp = Blueprint('main_interface', __name__, url_prefix='/')
 
-    #from yourapplication.model import db
-    #db.init_app(app)
-
-    #from yourapplication.views.admin import admin
-    #from yourapplication.views.frontend import frontend
-    #app.register_blueprint(admin)
-    #app.register_blueprint(frontend)
-
-    return app
-
-#app = Flask(__name__)
-#app.config["SECRET_KEY"] = "your secret key"
-app = create_app()
-
-@app.route("/", methods=["POST","GET"]) 
+@bp.route("/", methods=["POST","GET"]) 
 def sitoHTML():
     if request.method == "GET": #show requested page with empty form
         return render_template("sitoHTML.html")
@@ -198,8 +183,10 @@ def sitoHTML():
         #                         PARAMETER LEARNING                        #
         #####################################################################
         elif (RadioButton1 == "Parameter Learning"):
-            solver = pasta_solver.Pasta("tmpFile.lp", Query)
-
+            if (Query == "none"):
+                solver = pasta_solver.Pasta("tmpFile.lp","")
+            else:
+                solver = pasta_solver.Pasta("tmpFile.lp", Query)
             if request.form.get("Upper"):
                 Upper = True
             else:

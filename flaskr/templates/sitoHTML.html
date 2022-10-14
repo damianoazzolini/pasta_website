@@ -23,20 +23,20 @@
 
     <!-- query -->
     <label for="inputQ"> Query (string) </label><br>
-    <input type="text" id="inputQ" name="inputQ" placeholder="string" onchange="FillTheQuery()" value={{ request.form['inputQ'] }}><br>
+    <input type="text" id="inputQ" name="inputQ" placeholder="string" onchange="fillQuery();" value="{{ request.form['inputQ'] }}"><br>
     Must fill (optional for -Parameter Learning-)
     <br><br>
     <!-- evidenza -->
     <label for="inputEv"> Evidence (string) </label><br>
-    <input type="text" id="inputEv" name="inputEv" placeholder="string" onchange="ToggleLevel_1()" value={{ request.form['inputEv'] }}><br>
+    <input type="text" id="inputEv" name="inputEv" placeholder="string" onchange="ToggleLevel_1()" value="{{ request.form['inputEv'] }}"><br>
     optional for -Exact Inference- and -Approximate Inference-
     <br><br>
 
     <!-- checkbox -->
-    <input type="radio" id="ExInf" name="options" value="Exact Inference" checked onclick="ToggleLevel_1();ToggleLevel_3();">
+    <input type="radio" id="ExInf" name="options" value="Exact Inference" checked onclick="ToggleLevel_1();">
     <label for="ExInf"> Exact Inference </label><br><br>
 
-    <input type="radio" id="AppInf" name="options" value="Approximate Inference" onclick="ToggleLevel_1();ToggleLevel_3();">
+    <input type="radio" id="AppInf" name="options" value="Approximate Inference" onclick="ToggleLevel_1();">
     <label for="AppInf"> Approximate Inference </label><br>
         <!-- checkboxes for Approximate Inference -->
         &emsp;&emsp;&emsp;
@@ -57,30 +57,32 @@
         <br><br>
         <!-- END checkboxes for Approximate Inference -->
     
-    <input type="radio" id="MapInf" name="options" value="Map Inference" onclick="ToggleLevel_1();ToggleLevel_3();">
+    <input type="radio" id="MapInf" name="options" value="Map Inference" onclick="ToggleLevel_1();">
     <label for="MapInf"> Map Inference </label> &emsp;&emsp;&emsp;&emsp;
     <input type="checkbox" id="Upper" name="Upper" value="True">
     <label for="Upper"> upper (false default) </label>
     <br><br>
 
-    <input type="radio" id="Abd" name="options" value="Abduction" onclick="ToggleLevel_1();ToggleLevel_3();">
+    <input type="radio" id="Abd" name="options" value="Abduction" onclick="ToggleLevel_1();">
     <label for="Abd"> Abduction </label><br><br>
     
-    <input type="radio" id="PL" name="options" value="Parameter Learning" onclick="ToggleLevel_1();ToggleLevel_3();">
-    <label for="PL"> Parameter Learning </label> &emsp; (if no query needed) ===>
+    <input type="radio" id="PL" name="options" value="Parameter Learning" onclick="ToggleLevel_1();">
+    <label for="PL"> Parameter Learning </label> 
+    &emsp; (if no query needed) ===>
     <input type="checkbox" id="fillQuery" name="fillQuery" value="True" onchange="FillTheQuery()">
     <label for="fillQuery"> fill query with "none" </label>
-    <br><br>
+    <br><br> 
     <!-- END checkbox -->
 
     <input type="submit" value="Submit">
-    <input type="reset" value="Reset"> 
+    <input type="reset" value="Reset" onclick="ResetAll();"> 
     <br><br>
     <!-- OUTPUT programma -->
-    Show Results:<br>
-    <textarea rows="10" cols="60" name="outputPr" placeholder="output shown here">{{CodeOut}}</textarea><br><br>
     
 </form>
+Show Results:<br>
+<textarea rows="10" cols="60" name="outputPr" placeholder="output shown here">{{CodeOut}}</textarea><br><br>
+
 {% for message in get_flashed_messages() %}
 <div class="alert">{{ message }}</div>
 {% endfor %}
@@ -102,11 +104,13 @@
     var fillQuery = document.getElementById("fillQuery");
 
     if(typeof(Storage)!=="undefined" && localStorage.textToHome){
-        ProgramText.innerHTML=localStorage.textToHome;
+        ProgramText.innerHTML=localStorage.textToHome; 
     }
-    else{
-        ProgramText.innerHTML="Sorry, your browser does not support web storage...";
-    }
+    //else{
+    //    ProgramText.innerHTML="Sorry, your browser does not support web storage...";
+    //}
+    localStorage.clear();
+    
 
     function ToggleLevel_1 () {        
         if (ApproximateInference.checked) {
@@ -136,8 +140,16 @@
         } else{
             Blocks.disabled=true
         }
+    }
 
-    
+    function ResetAll () {
+        Query.value = ""
+        Evidenza.value = ""
+        ProgramText.innerHTML = ""
+        ToggleLevel_1();
+        ToggleLevel_2();
+        nSamples.disabled = "true"
+        localStorage.clear();
     }
 
     function FillTheQuery () {
@@ -145,6 +157,7 @@
             Query.value = "none"
         }
     }
+
 </script>
 
 </body>
