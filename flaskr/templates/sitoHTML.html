@@ -23,12 +23,12 @@
 
     <!-- query -->
     <label for="inputQ"> Query (string) </label><br>
-    <input type="text" id="inputQ" name="inputQ" placeholder="string" onchange="fillQuery();" value="{{ request.form['inputQ'] }}"><br>
+    <input type="text" id="inputQ" name="inputQ" placeholder="string" onchange="fillQuery();" value={{ request.form['inputQ'] }}><br>
     Must fill (optional for -Parameter Learning-)
     <br><br>
     <!-- evidenza -->
     <label for="inputEv"> Evidence (string) </label><br>
-    <input type="text" id="inputEv" name="inputEv" placeholder="string" onchange="ToggleLevel_1()" value="{{ request.form['inputEv'] }}"><br>
+    <input type="text" id="inputEv" name="inputEv" placeholder="string" onchange="ToggleLevel_1()" value={{ request.form['inputEv'] }}><br>
     optional for -Exact Inference- and -Approximate Inference-
     <br><br>
 

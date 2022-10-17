@@ -1,5 +1,5 @@
 import pytest
-from flaskr.main_interface import create_app
+from flaskr.__init__ import create_app
 
 @pytest.fixture(scope='module')
 def test_client():
