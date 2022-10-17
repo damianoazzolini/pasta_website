@@ -1,7 +1,10 @@
 from cgi import test
 import string
 import pytest
-from flask import *
+from flask import current_app
+
+Upper = [True, False]
+AI_options = ["rejection","mh","gibbs"]
 
 def test_home_page_with_fixture(test_client):
     """
@@ -11,10 +14,6 @@ def test_home_page_with_fixture(test_client):
     """
     response = test_client.get("/")
     assert response.status_code == 200
-    assert b"HOME - PASTA WEBSITE" in response.data
-    #assert b"Flask User Management Example!" in response.data
-    #assert b"Need an account?" in response.data
-    #assert b"Existing user?" in response.data
 
 def test_sub_pages(test_client):
     """
@@ -54,46 +53,54 @@ def test_form_post_EXACT_INFERENCE(test_client):
 def test_form_post_APPROXIMATE_INFERENCE(test_client):
     with open('esempi/bird_4.lp', 'r') as file:
         program = file.read()
-    responde = test_client.post("/", data={
-        "inputPr":program,
-        "inputQ":"fly(1)",
-        "inputEv":"",
-        "options":"Approximate Inference",
-        "nSamples":"1000",
-        "AI_options":"",
-        "Blocks":""        
-    })
-    assert responde.status_code == 200
+    for opt in AI_options:    
+        responde = test_client.post("/", data={
+            "inputPr":program,
+            "inputQ":"fly(1)",
+            "inputEv":"",
+            "options":"Approximate Inference",
+            "nSamples":"1000",
+            "AI_options": opt,
+            "Blocks":""        
+        })
+        assert responde.status_code == 200
+
  
 def test_form_post_MAP_INFERENCE(test_client):
     with open('esempi/gold_map.lp', 'r') as file:
         program = file.read()
-    responde = test_client.post("/", data={
-        "inputPr":program,
-        "inputQ":"win",
-        "options":"Map Inference",
-        "Upper": "True"
-    })
-    assert responde.status_code == 200
+    for upper in Upper:
+        responde = test_client.post("/", data={
+            "inputPr":program,
+            "inputQ":"valuable(1)",
+            "inputEv":"", #never used
+            "options":"Map Inference",
+            "Upper": upper
+        })
+        assert responde.status_code == 200
 
 def test_form_post_ABDUCTION(test_client):
     with open('esempi/bird_4_abd_prob.lp', 'r') as file:
         program = file.read()
-    responde = test_client.post("/", data={
-        "inputPr":program,
-        "inputQ":"fly(1)",
-        "options":"Abduction",
-        "Upper":"True"
-    })
-    assert responde.status_code == 200
+    for upper in Upper:
+        responde = test_client.post("/", data={
+            "inputPr":program,
+            "inputQ":"fly(1)",
+            "inputEv":"", #never used
+            "options":"Abduction",
+            "Upper":upper
+        })
+        assert responde.status_code == 200
     
 def test_form_post_PARAMETER_LEARNING(test_client):
     with open('esempi/background_shop.lp', 'r') as file:
         program = file.read()
-    responde = test_client.post("/", data={
-        "inputPr":program,
-        "inputQ":"none",
-        "options":"Parameter Learning",
-        "Upper":"True"
-    })
-    assert responde.status_code == 200
+    for upper in Upper:
+        responde = test_client.post("/", data={
+            "inputPr":program,
+            "inputQ":"none",
+            "inputEv":"", #never used
+            "options":"Parameter Learning",
+            "Upper":upper
+        })
+        assert responde.status_code == 200
