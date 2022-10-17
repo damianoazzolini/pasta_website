@@ -3,6 +3,7 @@ import sys
 sys.path.append("venv/lib/python3.8/site-packages/pasta") #otherwise flask won't find it
 import pasta_solver
 from flaskr.__init__ import *
+from flaskr.db import get_db
 
 #####################################################################
 #      workaround for printing results on Parameter Learning        #
@@ -137,13 +138,12 @@ def sitoHTML():
         #####################################################################
         elif (RadioButton1 == "Map Inference"):
             solver = pasta_solver.Pasta("tmpFile.lp", Query)
-            
+
             if request.form.get("Upper"):  #upper for last 3 Button
                 #Upper = True
-                max_p, atoms_list = solver.upper_mpe_inference()
-            else:
-                #Upper=False
-                max_p, atoms_list = solver.map_inference()
+                solver.consider_lower_prob = False
+                
+            max_p, atoms_list = solver.map_inference()
 
             map_op = len(atoms_list) > 0 and len(atoms_list[0]) == len(solver.interface.prob_facts_dict)
             map_or_mpe = "MPE" if map_op else "MAP"
@@ -163,7 +163,7 @@ def sitoHTML():
             if request.form.get("Upper"):  #upper for last 3 Button
                 Upper = True
             else:
-                Upper=False
+                Upper = False
                 
             lp, up, abd_explanations = solver.abduction()
             abd_exp_no_dup = pasta_solver.Pasta.remove_dominated_explanations(abd_explanations)
@@ -190,7 +190,7 @@ def sitoHTML():
             if request.form.get("Upper"):
                 Upper = True
             else:
-                Upper=False
+                Upper = False
 
             with Capturing() as answer:
                 solver.parameter_learning(Upper)
