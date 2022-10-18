@@ -1,7 +1,6 @@
 from cgi import test
-import string
-import pytest
-from flask import current_app
+#import string
+#import pytest
 
 Upper = [True, False]
 AI_options = ["rejection","mh","gibbs"]

@@ -23,7 +23,7 @@
 
     <!-- query -->
     <label for="inputQ"> Query (string) </label><br>
-    <input type="text" id="inputQ" name="inputQ" placeholder="string" onchange="fillQuery();" value={{ request.form['inputQ'] }}><br>
+    <input type="text" id="inputQ" name="inputQ" placeholder="string" onchange="FillTheQuery();" required value={{ request.form['inputQ'] }}><br>
     Must fill (optional for -Parameter Learning-)
     <br><br>
     <!-- evidenza -->
@@ -68,7 +68,7 @@
     
     <input type="radio" id="PL" name="options" value="Parameter Learning" onclick="ToggleLevel_1();">
     <label for="PL"> Parameter Learning </label> 
-    &emsp; (if no query needed) ===>
+    - (if no query needed) ==>
     <input type="checkbox" id="fillQuery" name="fillQuery" value="True" onchange="FillTheQuery()">
     <label for="fillQuery"> fill query with "none" </label>
     <br><br> 
@@ -80,12 +80,12 @@
     <!-- OUTPUT programma -->
     
 </form>
-Show Results:<br>
-<textarea rows="10" cols="60" name="outputPr" placeholder="output shown here">{{CodeOut}}</textarea><br><br>
-
+Show Results: 
 {% for message in get_flashed_messages() %}
 <div class="alert">{{ message }}</div>
 {% endfor %}
+<br>
+<textarea rows="10" cols="60" name="outputPr" placeholder="output shown here">{{CodeOut}}</textarea><br><br>
 
 <script>
     var ProgramText = document.getElementById("inputPr");
