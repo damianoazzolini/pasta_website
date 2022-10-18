@@ -1,11 +1,11 @@
 # PastaWebsite
 NOT READY YET
 
-###TO DO LIST
+### TO DO LIST
 - database
 - tests fo db
 
-###DONE
+### DONE
 - main interface
 - static secondary pages
 - tests for main_interface
