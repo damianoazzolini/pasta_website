@@ -1,17 +1,35 @@
+import os
+import tempfile
+
 import pytest
 from flaskr.__init__ import create_app
+from flaskr.db import get_db, init_db
+
+with open(os.path.join(os.path.dirname(__file__), 'data.sql'), 'rb') as f:
+    _data_sql = f.read().decode('utf8')
 
 @pytest.fixture(scope='module')
-def test_client():
-    flask_app = create_app()
-    flask_app.config.update({
+def app():
+    db_fd, db_path = tempfile.mkstemp()
+    app = create_app()
+    app.config.update({
         "TESTING": True,
+        'DATABASE': db_path
     })
 
-    # Create a test client using the Flask application configured for testing
-    with flask_app.test_client() as testing_client:
-        # Establish an application context
-        with flask_app.app_context():
-            yield testing_client  # this is where the testing happens!
-
+    with app.app_context():
+        init_db()
+        get_db().executescript(_data_sql)
     
+    yield app
+    
+    os.close(db_fd)
+    os.unlink(db_path)
+
+@pytest.fixture
+def client(app):
+    return app.test_client()
+    
+@pytest.fixture
+def runner(app):
+    return app.test_cli_runner()
