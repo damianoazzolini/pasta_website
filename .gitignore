@@ -5,6 +5,8 @@ tokengit.txt
 esempi
 tmpFile.lp
 flaskr/__pycache__
+instance/flaskr.sqlite
+
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
