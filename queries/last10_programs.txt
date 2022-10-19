@@ -1,0 +1,6 @@
+SELECT * FROM (
+    SELECT id_request, program
+    FROM Request
+    ORDER BY id_request 
+    DESC LIMIT 10)
+ORDER BY id_request ASC

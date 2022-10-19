@@ -1,0 +1,6 @@
+SELECT * FROM (
+    SELECT id_request, query, evidence, option_1, option_2, nSamples, blocks, upper, errors
+    FROM Request
+    ORDER BY id_request 
+    DESC LIMIT 10)
+ORDER BY id_request ASC
