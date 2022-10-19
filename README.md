@@ -5,13 +5,13 @@ Website for the application Pasta https://github.com/damianoazzolini/pasta <br /
 ### how to install locally
 To be able to use the web interface locally you need to first create a python virtual environment 
 and then install all dependencies described in "requirements.txt": <br />
-'''bash
+'''
 python3 -m venv venv
 '''
-'''bash
+'''
 . venv/bin/activate
 '''
-'''bash
+'''
 pip install -r requirements.txt
 '''
 <br />
@@ -20,12 +20,12 @@ Note: Pasta module will install his dependencies but not the pasta module itself
 
 #### create your local Database and queries
 To create your local db you'll need sqlite3. After you've installed it, you can creare your db file with:
-'''bash
+'''
 flask --app flaskr init-db
 '''
 
 after that you can open it with:
-'''bash
+'''
 sqlite3 instance/flaskr.sqlite
 '''
 
@@ -37,7 +37,7 @@ other preset queries are saved in /queries/. <br />
 
 #### run tests
 To run tests you can use:
-'''bash
+'''
 python3 -m pytest
 '''
 
