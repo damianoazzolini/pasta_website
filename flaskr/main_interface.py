@@ -61,8 +61,8 @@ def sitoHTML():
         RadioButton1 = str(request.form["options"])  #one of 5 radio button
 
         RadioButton2 = "none"
-        nSamples = 1
-        Blocks = 1
+        nSamples = 0
+        Blocks = 0
         Upper = "none"
 
         if (not RadioButton1):
@@ -197,7 +197,7 @@ def sitoHTML():
             #####################################################################
             else:
                 raise Exception("OPTION 1 ERROR (CASE)")
-            errore = "nessun errore"
+            errore = "ALL OK"
 
         except Exception as error:
             flash("OPS! SOMETHING WENT WRONG")
@@ -205,11 +205,14 @@ def sitoHTML():
             answer = errore
 
         finally:
-            db.execute(
-                "INSERT INTO Request (program, query, evidence, option_1, option_2, nSamples, blocks, upper, errors) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                                     (ProgramCode, Query, Evidence, str(RadioButton1), RadioButton2, str(nSamples), str(Blocks), str(Upper), errore)
-            )
-            db.commit()
+            try:
+                db.execute(
+                    "INSERT INTO Request (program, query, evidence, option_1, option_2, nSamples, blocks, upper, errors) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                                        (ProgramCode, Query, Evidence, str(RadioButton1), RadioButton2, str(nSamples), str(Blocks), str(Upper), errore)
+                )
+                db.commit()
+            except:
+                answer += "\nERRORE DATABASE !!!"
     return render_template("sitoHTML.html",CodeOut = answer)
 
     
