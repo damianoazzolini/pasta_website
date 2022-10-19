@@ -1,3 +1,0 @@
-SELECT option_1, query, errors
-FROM Request
-ORDER BY query
