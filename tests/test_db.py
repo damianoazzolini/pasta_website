@@ -19,9 +19,7 @@ def test_get_close_db(app):
     assert 'closed' in str(e.value)
 
 """
-GIVEN 
-WHEN 
-THEN ????????????????????????
+fake call of init_db function to test if it works properly
 """
 def test_init_db_command(runner, monkeypatch):
     class Recorder(object):
