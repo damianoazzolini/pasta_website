@@ -1,7 +1,8 @@
 from flask import render_template, request, flash, Blueprint
 import sys
-sys.path.append("venv/lib/python3.8/site-packages/pasta") #otherwise flask won't find it
-import pasta_solver
+#sys.path.append("venv/lib/python3.8/site-packages/pasta") #otherwise flask won't find it
+#import pasta_solver
+from pasta.pasta import pasta_solver
 from flaskr.__init__ import *
 from flaskr.db import get_db
 

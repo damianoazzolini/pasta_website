@@ -5,8 +5,10 @@ tokengit.txt
 esempi
 tmpFile.lp
 flaskr/__pycache__
-instance/flaskr.sqlite
-
+*/flaskr.sqlite
+.vscode
+pasta-master.zip
+pasta
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -73,7 +75,6 @@ db.sqlite3
 db.sqlite3-journal
 
 # Flask stuff:
-instance/
 .webassets-cache
 
 # Scrapy stuff:
