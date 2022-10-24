@@ -6,6 +6,7 @@ First of all you need to clone this repository
 ```
 git clone git@github.com:damianoazzolini/pasta_website.git
 ```
+and add the [Pasta]( https://github.com/damianoazzolini/pasta) submodule (see .gitmodules).
 <br />
 
 ## Local installation
