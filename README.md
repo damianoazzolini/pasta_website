@@ -6,6 +6,7 @@ First of all you need to clone this repository
 ```
 git clone git@github.com:damianoazzolini/pasta_website.git
 ```
+<br />
 
 ## Local installation
 To be able to use the web interface locally you'll need to first create and enter on a python `virtual environment`
@@ -18,12 +19,11 @@ python3 -m venv venv
 ```
 . venv/bin/activate
 ```
-The requirements for this application are `Flask` and [Pasta](https://github.com/damianoazzolini/) package
+The requirements for this application is just flask `Flask` as [Pasta](https://github.com/damianoazzolini/) is connected as a subdirectory to this package and doesn't need to be installed inside the `venv`
 ```
 pip install -r requirements.txt
 ```
-Note: Pasta module will install his dependencies but not the pasta module itself (you can drag and drop /pasta/pasta folder inside /venv/lib/python3.8/site-packages) - currently working on a fix
-<br /><br />
+<br />
 
 ## Create a local Database
 We'll use sqlite3 for this application. <br />
@@ -41,7 +41,8 @@ at this point you can run some pre saved queries:
 ```
 .read queries/last10_programs.txt
 ```
-other preset queries are saved in /queries/. <br /><br />
+other preset queries are saved in /queries/. <br />
+Note: the only way to have an empty db is to delete the "flaskr.sqlite" file and create it again.<br />
 
 ## Run tests
 To run tests you can use:
@@ -59,19 +60,18 @@ optional for debug/programming purpose:
 ```
 flask --app flaskr/main_interface --debug run
 ```
-At this point your server will be running at standard ip/port 127.0.0.1:5000 (standard for flask applications)
+At this point your server will be running at standard ip/port 127.0.0.1:5000 (standard for flask applications). You can add `--host <ip>` to run the app on another ip.
+<br />
 
-
-
-
-
-<br /><br /><br />
-### notes for myself :)
-DONE
-- main interface
-- static secondary pages
-- tests for main_interface & database
-- database
-
-TO DO<br />
-- docker image
+## Create a Docker image
+(there are no images on dockerhub yet) <br/>
+To create your own docker image just run the command:
+```
+docker build -t <image name> .
+```
+and to run the container:
+```
+docker run -d -p 5000:5000 <image name>
+```
+at this point the server will be running locally at `localhost:5000` <br/>
+You can also use [Docker Desktop](https://www.docker.com/products/docker-desktop/) to manage your images and containers.
