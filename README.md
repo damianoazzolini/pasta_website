@@ -24,7 +24,6 @@ The requirements for this application is just flask `Flask` as [Pasta](https://g
 ```
 pip install -r requirements.txt
 ```
-<br />
 
 ## Create a local Database
 We'll use sqlite3 for this application. <br />
@@ -50,7 +49,6 @@ To run tests you can use:
 ```
 python3 -m pytest
 ```
-<br />
 
 ## RUN THE WEBSITE (locally)
 As long as you are still inside the `venv` you can start your web application:
