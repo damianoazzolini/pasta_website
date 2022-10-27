@@ -1,3 +1,6 @@
 [submodule "pasta"]
 	path = pasta
 	url = https://github.com/damianoazzolini/pasta
+[submodule "milligram"]
+	path = milligram
+	url = https://github.com/milligram/milligram
