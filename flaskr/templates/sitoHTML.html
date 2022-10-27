@@ -1,10 +1,21 @@
+
 <!DOCTYPE html>
 <html>
 <head>
+<!-- Google Fonts -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
+
+<!-- CSS Reset -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css">
+
+<!-- Milligram CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.css">
+
 <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 <title>PASTA WEBSITE</title>
 </head>
 <body>
+    <div class="container">
 <h1>HOME - PASTA WEBSITE</h1>
 
 <h3>
@@ -15,70 +26,79 @@
     <a href="static/examples.html">Examples</a>
     |_/\_|
 </h3>
-
+</div>
 <form method="POST">
-    <!-- codice programma -->
-    Input Code<br>
-    <textarea rows="10" cols="60" name="inputPr" id="inputPr" placeholder="insert code here" required>{{ request.form['inputPr'] }}</textarea><br><br>
+    <fieldset>
+        <div class="container">
+        <!-- codice programma -->
+        Input Code<br>
+        <textarea rows="10" cols="60" name="inputPr" id="inputPr" placeholder="insert code here" required>{{ request.form['inputPr'] }}</textarea><br>
 
-    <!-- query -->
-    <label for="inputQ"> Query (string) </label><br>
-    <input type="text" id="inputQ" name="inputQ" placeholder="string" onchange="FillTheQuery();" required value={{ request.form['inputQ'] }}><br>
-    Must fill (optional for -Parameter Learning-)
-    <br><br>
-    <!-- evidenza -->
-    <label for="inputEv"> Evidence (string) </label><br>
-    <input type="text" id="inputEv" name="inputEv" placeholder="string" onchange="ToggleLevel_1()" value={{ request.form['inputEv'] }}><br>
-    optional for -Exact Inference- and -Approximate Inference-
-    <br><br>
-
-    <!-- checkbox -->
-    <input type="radio" id="ExInf" name="options" value="Exact Inference" checked onclick="ToggleLevel_1();">
-    <label for="ExInf"> Exact Inference </label><br><br>
-
-    <input type="radio" id="AppInf" name="options" value="Approximate Inference" onclick="ToggleLevel_1();">
-    <label for="AppInf"> Approximate Inference </label><br>
-        <!-- checkboxes for Approximate Inference -->
-        &emsp;&emsp;&emsp;
-        <label for="nSamples"> n Samples (int) </label>&emsp;   
-        <input type="text" id="nSamples" name="nSamples" value="1000" disabled="true"><br>
-        &emsp;&emsp;&emsp;
-        <input type="radio" id="RjS" name="AI_options" value="rejection" disabled="true" onclick="ToggleLevel_2()">
-        <label for="RjS"> Rejection Sampling </label><br>
-        &emsp;&emsp;&emsp;
-        <input type="radio" id="MHS" name="AI_options" value="mh" disabled="true" onclick="ToggleLevel_2()">
-        <label for="MHS"> Metropolis Hastings Sampling </label><br>
-        &emsp;&emsp;&emsp;
-        <input type="radio" id="GS" name="AI_options" value="gibbs" disabled="true" onclick="ToggleLevel_2()">
-        <label for="GS"> Gibbs Sampling </label><br> &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-        <label for="Blocks"> blocks (int) </label>&emsp;
-        <input type="text" id="Blocks" name="Blocks" placeholder="int" disabled="true" value="{{ request.form['Blocks'] }}">
-
+        <!-- query -->
+        <label for="inputQ"> Query (string) </label>
+        <input type="text" id="inputQ" name="inputQ" placeholder="string" onchange="FillTheQuery();" required value={{ request.form['inputQ'] }}><br>
+        Must fill (optional for -Parameter Learning-)
+        <br>
+        <input type="checkbox" id="inconsistent" name="inconsistent" value="False" onclick="inconsistent_click();">
+        <label class="label-inline" for="inconsistent" id="inc_label"> inconsistent [False]</label>
+        <br>
+        <input type="checkbox" id="normalize" name="normalize" value="False" onclick="normalize_click();">
+        <label class="label-inline" for="normalize" id="norm_label"> normalize [False]</label>
+        <br>
+        <!-- evidenza -->
+        <label for="inputEv"> Evidence (string) </label><br>
+        <input type="text" id="inputEv" name="inputEv" placeholder="string" onchange="ToggleLevel_1()" value={{ request.form['inputEv'] }}>
+        optional for -Exact Inference- and -Approximate Inference-
         <br><br>
-        <!-- END checkboxes for Approximate Inference -->
-    
-    <input type="radio" id="MapInf" name="options" value="Map Inference" onclick="ToggleLevel_1();">
-    <label for="MapInf"> Map Inference </label> &emsp;&emsp;&emsp;&emsp;
-    <input type="checkbox" id="Upper" name="Upper" value="True">
-    <label for="Upper"> upper (false default) </label>
-    <br><br>
 
-    <input type="radio" id="Abd" name="options" value="Abduction" onclick="ToggleLevel_1();">
-    <label for="Abd"> Abduction </label><br><br>
-    
-    <input type="radio" id="PL" name="options" value="Parameter Learning" onclick="ToggleLevel_1();">
-    <label for="PL"> Parameter Learning </label> 
-    - (if no query needed) ==>
-    <input type="checkbox" id="fillQuery" name="fillQuery" value="True" onchange="FillTheQuery()">
-    <label for="fillQuery"> fill query with "none" </label>
-    <br><br> 
-    <!-- END checkbox -->
+        <!-- checkbox -->
+        <input type="radio" id="ExInf" name="options" value="Exact Inference" checked onclick="ToggleLevel_1();">
+        <label class="label-inline" for="ExInf"> Exact Inference </label><br>
 
-    <input type="submit" value="Submit">
-    <input type="reset" value="Reset" onclick="ResetAll();"> 
-    <br><br>
-    <!-- OUTPUT programma -->
-    
+        <input type="radio" id="AppInf" name="options" value="Approximate Inference" onclick="ToggleLevel_1();">
+        <label class="label-inline" for="AppInf"> Approximate Inference </label><br>
+            <!-- checkboxes for Approximate Inference -->
+            &emsp;&emsp;&emsp;
+            <label class="label-inline" for="nSamples"> n Samples (int) </label>&emsp;   
+            <input type="text" id="nSamples" name="nSamples" value="1000" disabled="true"><br>
+            &emsp;&emsp;&emsp;
+            <input type="radio" id="RjS" name="AI_options" value="rejection" disabled="true" onclick="ToggleLevel_2()">
+            <label class="label-inline" for="RjS"> Rejection Sampling </label><br>
+            &emsp;&emsp;&emsp;
+            <input type="radio" id="MHS" name="AI_options" value="mh" disabled="true" onclick="ToggleLevel_2()">
+            <label class="label-inline" for="MHS"> Metropolis Hastings Sampling </label><br>
+            &emsp;&emsp;&emsp;
+            <input type="radio" id="GS" name="AI_options" value="gibbs" disabled="true" onclick="ToggleLevel_2()">
+            <label class="label-inline" for="GS"> Gibbs Sampling </label><br> &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+            <label class="label-inline" for="Blocks"> blocks (int) </label>&emsp;
+            <input type="text" id="Blocks" name="Blocks" placeholder="int" disabled="true" value="{{ request.form['Blocks'] }}">
+
+            <br>
+            <!-- END checkboxes for Approximate Inference -->
+        
+        <input type="radio" id="MapInf" name="options" value="Map Inference" onclick="ToggleLevel_1();">
+        <label class="label-inline" for="MapInf"> Map Inference </label> &emsp;&emsp;&emsp;&emsp;
+        <input type="checkbox" id="Upper" name="Upper" value="False" onclick="upper_click();">
+        <label class="label-inline" for="Upper" id="up_label"> upper [False] </label>
+        <br>
+
+        <input type="radio" id="Abd" name="options" value="Abduction" onclick="ToggleLevel_1();">
+        <label class="label-inline" for="Abd"> Abduction </label><br><br>
+        
+        <input type="radio" id="PL" name="options" value="Parameter Learning" onclick="ToggleLevel_1();">
+        <label class="label-inline" for="PL"> Parameter Learning </label> 
+        - (if no query needed) ==>
+        <input type="checkbox" id="fillQuery" name="fillQuery" onchange="FillTheQuery()">
+        <label class="label-inline" for="fillQuery"> fill query with "none" </label>
+        <br>
+        <!-- END checkbox -->
+
+        <input class="button" type="submit" value="Submit">
+        <input type="reset" value="Reset" onclick="ResetAll();"> 
+        <br>
+        <!-- OUTPUT programma -->
+    </div>
+    </fieldset>
 </form>
 Show Results: 
 {% for message in get_flashed_messages() %}
@@ -97,11 +117,46 @@ Show Results:
     var MetropolisHS = document.getElementById("MHS");
     var GibbsSampling = document.getElementById("GS");
     var Blocks = document.getElementById("Blocks");
-    var MapInference = document.getElementById("MapInf");
-    var Abduction = document.getElementById("Abd");
-    var ParameterLearning = document.getElementById("PL");
+    //var MapInference = document.getElementById("MapInf");
+    //var Abduction = document.getElementById("Abd");
+    //var ParameterLearning = document.getElementById("PL");
     var Upper = document.getElementById("Upper");
+    var norm_label = document.getElementById('norm_label');
     var fillQuery = document.getElementById("fillQuery");
+    var Inconsistent = document.getElementById('inconsistent');
+    var inc_label = document.getElementById('inc_label');
+    var Normalize = document.getElementById('normalize');
+    var norm_label = document.getElementById('norm_label');
+
+    function inconsistent_click(){
+        if (Inconsistent.checked){
+            inc_label.innerHTML = "inconsistent [True]";
+            Inconsistent.value = "True";
+        }else{
+            inc_label.innerHTML = "inconsistent [False]";
+            Inconsistent.value = "False";
+        }
+    }
+
+    function normalize_click(){
+        if (Normalize.checked){
+            norm_label.innerHTML = "normalize [True]";
+            Normalize.value = "True";
+        }else{
+            norm_label.innerHTML = "normalize [False]";
+            Normalize.value = "False";
+        }
+    }
+
+    function upper_click(){
+        if (Upper.checked){
+            up_label.innerHTML = "upper [True]";
+            Upper.value = "True";
+        }else{
+            up_label.innerHTML = "upper [False]";
+            Upper.value = "False";
+        }
+    }
 
     if(typeof(Storage)!=="undefined" && localStorage.textToHome){
         ProgramText.innerHTML=localStorage.textToHome; 
