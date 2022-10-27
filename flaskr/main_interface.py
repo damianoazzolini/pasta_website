@@ -1,45 +1,11 @@
 from flask import render_template, request, flash, Blueprint
 import sys
-#sys.path.append("venv/lib/python3.8/site-packages/pasta") #otherwise flask won't find it
-#import pasta_solver
-sys.path.append("pasta/pasta") #otherwise flask won't find it
+#sys.path.append("venv/lib/python3.8/site-packages/pasta")  #otherwise flask won't find it
+sys.path.append("pasta/pasta")                              #otherwise flask won't find it
 import pasta_solver
 from flaskr.__init__ import *
 from flaskr.db import get_db
-
-#####################################################################
-#      workaround for printing results on Parameter Learning        #
-#####################################################################
 from io import StringIO 
-#import sys
-
-class Capturing(list):                    #associate print() to a list
-    def __enter__(self):
-        self._stdout = sys.stdout
-        sys.stdout = self._stringio = StringIO()
-        return self
-    def __exit__(self, *args):
-        self.extend(self._stringio.getvalue().splitlines())
-        del self._stringio    # free up some memory
-        sys.stdout = self._stdout
-
-def external_method():              #redirecting pasta lib stdout
-    print ("")
-
-class MyBuffer(object):
-  def __init__(self):
-    self.buffer = []
-  def write(self, *args, **kwargs):
-    self.buffer.append(args)
-
-old_stdout = sys.stdout
-sys.stdout = MyBuffer()
-external_method()
-my_buffer, sys.stdout = sys.stdout, old_stdout
-print (my_buffer.buffer)
-#####################################################################
-#      workaround for printing results on Parameter Learning        #
-#####################################################################
 
 class arguments: #for approximate inference
     rejection : bool
@@ -51,48 +17,45 @@ bp = Blueprint('main_interface', __name__, url_prefix='/')
 
 @bp.route("/", methods=["POST","GET"]) 
 def sitoHTML():
-    if request.method == "GET": #show requested page with empty form
+    if request.method == "GET":             ####GET call
         return render_template("sitoHTML.html")
 
-    elif request.method == "POST": #get the input form and give back results
+    elif request.method == "POST":          ####POST call
+        old_stdout = sys.stdout             #redirect stdout
+        sys.stdout = mystdout = StringIO()
         db = get_db()
         answer =""
         ProgramCode = str(request.form["inputPr"])   #1 textbox
         Query = str(request.form["inputQ"])          #2 textbox
         Evidence = str(request.form["inputEv"])           #3 textbox
         RadioButton1 = str(request.form["options"])  #one of 5 radio button
+        Inconsistent = bool(request.form.get("inconsistent"))
+        Normalize = bool(request.form.get("normalize"))
+        Upper = bool(request.form.get("Upper"))
 
         RadioButton2 = "none"
         nSamples = 0
         Blocks = 0
-        Upper = "none"
 
         if (not RadioButton1):
-            flash("SELECT ONE OPTIONS!") #porbably not needed - handled by HTML page
+            flash("SELECT ONE OPTIONS!")    #porbably not needed - handled by HTML page
         if (not Query and RadioButton1!="Parameter Learning"):
             flash("QUERY MUST BE FILLED")
 
         try:
-            """ Sending the program as a string might cause some issues
-                as line break on the form cause some sort of errors 
-                with pasta module. This is why a temporary file is
-                created to get around this issue. The file is overwritten
-                with any new POST call.
-            """
-            tmpFile = open("tmpFile.lp","w") 
-            tmpFile.write(ProgramCode)
-            tmpFile.close()
             
             #####################################################################
             #                           EXACT INFERENCE                         #
             #####################################################################
             if (RadioButton1 == "Exact Inference"):
                 if (not Evidence):
-                    solver = pasta_solver.Pasta("tmpFile.lp", Query)
+                    solver = pasta_solver.Pasta("", Query)
                 else:
-                    solver = pasta_solver.Pasta("tmpFile.lp", Query, Evidence)
+                    solver = pasta_solver.Pasta("", Query, Evidence)
                 
-                lp, up = solver.inference()      
+                solver.stop_if_inconsistent = Inconsistent
+                solver.normalize_prob = Normalize
+                lp, up = solver.inference(ProgramCode)      
                 answer = ("Lower probability for the query " + Query + ": " + str(lp) + 
                         "\n" + "Upper probability for the query " +  Query + ": " + str(up))
 
@@ -101,7 +64,7 @@ def sitoHTML():
             #####################################################################
             elif (RadioButton1 == "Approximate Inference"):
                 args = arguments
-                nSamples = int(request.form["nSamples"])                  #nSamples
+                nSamples = int(request.form["nSamples"])
 
                 if (not Evidence):
                     Evidence = ""
@@ -110,7 +73,7 @@ def sitoHTML():
                     args.gibbs      = False
                     args.block      = 0
                 else:
-                    RadioButton2 = str(request.form["AI_options"])  #radio button for Appr Inference        
+                    RadioButton2 = str(request.form["AI_options"])
                     if (RadioButton2 == "gibbs"):
                         Blocks_string = str(request.form["Blocks"])
                         args.rejection  = False
@@ -133,23 +96,25 @@ def sitoHTML():
                     else:
                         answer = "ERRORR - approximate inference"
 
-                solver = pasta_solver.Pasta("tmpFile.lp", Query, Evidence, False, False, nSamples)
-                lp, up = solver.approximate_solve(args)
+                solver = pasta_solver.Pasta("", Query, Evidence, False, False, nSamples)
+                solver.stop_if_inconsistent = Inconsistent
+                solver.normalize_prob = Normalize
+                lp, up = solver.approximate_solve(args, ProgramCode)
                 answer = ("Lower probability for the query " + Query + ": " + str(lp) + 
                         "\n" + "Upper probability for the query " +  Query + ": " + str(up))
-
+                
             #####################################################################
             #                           MAP INFERENCE                           #
             #####################################################################
             elif (RadioButton1 == "Map Inference"):
-                solver = pasta_solver.Pasta("tmpFile.lp", Query)
+                solver = pasta_solver.Pasta("", Query)
+                solver.stop_if_inconsistent = Inconsistent
+                solver.normalize_prob = Normalize
 
-                if request.form.get("Upper"):  #upper for last 3 Button
-                    #Upper = True
+                if Upper:
                     solver.consider_lower_prob = False
                     
-                max_p, atoms_list = solver.map_inference()
-
+                max_p, atoms_list = solver.map_inference(ProgramCode)
                 map_op = len(atoms_list) > 0 and len(atoms_list[0]) == len(solver.interface.prob_facts_dict)
                 map_or_mpe = "MPE" if map_op else "MAP"
                 answer = f"{map_or_mpe}: {max_p}\n{map_or_mpe} states: {len(atoms_list)}" + "\n"
@@ -161,14 +126,11 @@ def sitoHTML():
             #####################################################################
             elif (RadioButton1 == "Abduction"):
                 
-                solver = pasta_solver.Pasta("tmpFile.lp", Query)
-
-                if request.form.get("Upper"):  #upper for last 3 Button
-                    Upper = True
-                else:
-                    Upper = False
+                solver = pasta_solver.Pasta("", Query)
+                solver.stop_if_inconsistent = Inconsistent
+                solver.normalize_prob = Normalize
                     
-                lp, up, abd_explanations = solver.abduction()
+                lp, up, abd_explanations = solver.abduction(ProgramCode)
                 abd_exp_no_dup = pasta_solver.Pasta.remove_dominated_explanations(abd_explanations)
                 
                 if len(abd_exp_no_dup) > 0 and up != 0:
@@ -184,18 +146,18 @@ def sitoHTML():
             #                         PARAMETER LEARNING                        #
             #####################################################################
             elif (RadioButton1 == "Parameter Learning"):
+
                 if (Query == "none"):
-                    solver = pasta_solver.Pasta("tmpFile.lp","")
+                    solver = pasta_solver.Pasta("", "")
                 else:
-                    solver = pasta_solver.Pasta("tmpFile.lp", Query)
-                if request.form.get("Upper"):
-                    Upper = True
-                else:
-                    Upper = False
+                    solver = pasta_solver.Pasta("", Query)
+                solver.stop_if_inconsistent = Inconsistent
+                solver.normalize_prob = Normalize
 
-                with Capturing() as answer:
-                    solver.parameter_learning(Upper)
-
+                if Upper:
+                    solver.consider_lower_prob = False
+                solver.parameter_learning(ProgramCode)
+                answer = mystdout.getvalue()
             #####################################################################
             else:
                 raise Exception("OPTION 1 ERROR (CASE)")
@@ -207,6 +169,11 @@ def sitoHTML():
             answer = errore
 
         finally:
+            if (RadioButton1 == "Parameter Learning"):
+                warnings_stdout = ""
+            else:
+                warnings_stdout = "\n######################################\n" + mystdout.getvalue()
+            sys.stdout = old_stdout
             try:
                 db.execute(
                     "INSERT INTO Request (program, query, evidence, option_1, option_2, nSamples, blocks, upper, errors) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
@@ -214,7 +181,8 @@ def sitoHTML():
                 )
                 db.commit()
             except:
-                answer += "\nERRORE DATABASE !!!"
-    return render_template("sitoHTML.html",CodeOut = answer)
+                print("\nERRORE DATABASE !!!")
+
+        return render_template("sitoHTML.html",CodeOut = answer + warnings_stdout) 
 
     
