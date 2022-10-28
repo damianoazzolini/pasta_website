@@ -12,100 +12,110 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.css">
 
 <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
 <title>PASTA WEBSITE</title>
 </head>
+
 <body>
-    <div class="container">
-<h1>HOME - PASTA WEBSITE</h1>
+    <main class="wrapper">
+        <header style="text-align:center;" class="header" id="home">
+            <nav style="background-color:rgba(171, 150, 255, 0.249);" class="navigation">            
+                <h3>
+                    ⌂HOME
+                    ◄►
+                    <a style="color:rgb(192, 105, 255);" href="static/documentation.html">Documentation</a> --
+                    <a style="color:rgb(192, 105, 255);" href="static/about.html">About</a> --
+                    <a style="color:rgb(192, 105, 255);" href="static/examples.html">Examples</a>
+                    ◄►
+                </h3>
+            </nav>
+            <section class="container">
+                <h1 style="height: 30px; color:rgb(162, 31, 255); font-weight: bold;" class="title">PASTA WEBSITE</h1>
+                <h4>HOME</h4>
+            </section>
+        </header>
+    
+        <section style="background-color:rgba(239, 150, 255, 0.2);" class="container">
+            <form method="POST">
+                <fieldset>
+                    <!-- codice programma -->
+                    <label style="font-weight: bold;" for="inputPr"> Input Code </label>
+                    <textarea style="height: 300px;" rows="10" cols="60" name="inputPr" id="inputPr" placeholder="insert code here" required>{{ request.form['inputPr'] }}</textarea><br>
 
-<h3>
-    HOME
-    |_/\_|
-    <a href="static/documentation.html">Documentation</a> --
-    <a href="static/about.html">About</a> --
-    <a href="static/examples.html">Examples</a>
-    |_/\_|
-</h3>
-</div>
-<form method="POST">
-    <fieldset>
-        <div class="container">
-        <!-- codice programma -->
-        Input Code<br>
-        <textarea rows="10" cols="60" name="inputPr" id="inputPr" placeholder="insert code here" required>{{ request.form['inputPr'] }}</textarea><br>
+                    <!-- query -->
+                    <label for="inputQ"> Query </label>
+                    <input style="width: 250px;" type="text" id="inputQ" name="inputQ" placeholder="string" onchange="FillTheQuery();" required value={{ request.form['inputQ'] }}>
+                    &emsp;  Must fill
+                    <br>&emsp;&emsp;
+                    <input type="checkbox" id="inconsistent" name="inconsistent" value="False" onclick="inconsistent_click();">
+                    <label class="label-inline" for="inconsistent" id="inc_label"> inconsistent [False]</label>
+                    <br>&emsp;&emsp;
+                    <input type="checkbox" id="normalize" name="normalize" value="False" onclick="normalize_click();">
+                    <label class="label-inline" for="normalize" id="norm_label"> normalize [False]</label>
+                    <br>
+                    <!-- evidenza -->
+                    <label for="inputEv"> Evidence </label>
+                    <input style="width: 250px;" type="text" id="inputEv" name="inputEv" placeholder="string" onchange="ToggleLevel_1()" value={{ request.form['inputEv'] }}>
+                    &emsp;  Optional for -Exact Inference- and -Approximate Inference-
+                    <br><br>
 
-        <!-- query -->
-        <label for="inputQ"> Query (string) </label>
-        <input type="text" id="inputQ" name="inputQ" placeholder="string" onchange="FillTheQuery();" required value={{ request.form['inputQ'] }}><br>
-        Must fill (optional for -Parameter Learning-)
-        <br>
-        <input type="checkbox" id="inconsistent" name="inconsistent" value="False" onclick="inconsistent_click();">
-        <label class="label-inline" for="inconsistent" id="inc_label"> inconsistent [False]</label>
-        <br>
-        <input type="checkbox" id="normalize" name="normalize" value="False" onclick="normalize_click();">
-        <label class="label-inline" for="normalize" id="norm_label"> normalize [False]</label>
-        <br>
-        <!-- evidenza -->
-        <label for="inputEv"> Evidence (string) </label><br>
-        <input type="text" id="inputEv" name="inputEv" placeholder="string" onchange="ToggleLevel_1()" value={{ request.form['inputEv'] }}>
-        optional for -Exact Inference- and -Approximate Inference-
-        <br><br>
+                    <!-- checkbox -->
+                    <input type="radio" id="ExInf" name="options" value="Exact Inference" checked onclick="ToggleLevel_1();">
+                    <label style="font-weight: bold;" class="label-inline" for="ExInf"> Exact Inference </label><br>
 
-        <!-- checkbox -->
-        <input type="radio" id="ExInf" name="options" value="Exact Inference" checked onclick="ToggleLevel_1();">
-        <label class="label-inline" for="ExInf"> Exact Inference </label><br>
+                    <input type="radio" id="AppInf" name="options" value="Approximate Inference" onclick="ToggleLevel_1();">
+                    <label style="font-weight: bold;" class="label-inline" for="AppInf"> Approximate Inference </label><br>
+                        <!-- checkboxes for Approximate Inference -->
+                        &emsp;&emsp;&emsp;
+                        <label class="label-inline" for="nSamples"> n Samples (int) </label>&emsp;   
+                        <input style="width: 150px;" type="text" id="nSamples" name="nSamples" value="1000" disabled="true"><br>
+                        &emsp;&emsp;&emsp;
+                        <input type="radio" id="RjS" name="AI_options" value="rejection" disabled="true" onclick="ToggleLevel_2()">
+                        <label class="label-inline" for="RjS"> Rejection Sampling </label><br>
+                        &emsp;&emsp;&emsp;
+                        <input type="radio" id="MHS" name="AI_options" value="mh" disabled="true" onclick="ToggleLevel_2()">
+                        <label class="label-inline" for="MHS"> Metropolis Hastings Sampling </label><br>
+                        &emsp;&emsp;&emsp;
+                        <input type="radio" id="GS" name="AI_options" value="gibbs" disabled="true" onclick="ToggleLevel_2()">
+                        <label class="label-inline" for="GS"> Gibbs Sampling </label><br> &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+                        <label class="label-inline" for="Blocks"> blocks (int) </label>&emsp;
+                        <input style="width: 150px;" type="text" id="Blocks" name="Blocks" placeholder="int" disabled="true" value="{{ request.form['Blocks'] }}">
 
-        <input type="radio" id="AppInf" name="options" value="Approximate Inference" onclick="ToggleLevel_1();">
-        <label class="label-inline" for="AppInf"> Approximate Inference </label><br>
-            <!-- checkboxes for Approximate Inference -->
-            &emsp;&emsp;&emsp;
-            <label class="label-inline" for="nSamples"> n Samples (int) </label>&emsp;   
-            <input type="text" id="nSamples" name="nSamples" value="1000" disabled="true"><br>
-            &emsp;&emsp;&emsp;
-            <input type="radio" id="RjS" name="AI_options" value="rejection" disabled="true" onclick="ToggleLevel_2()">
-            <label class="label-inline" for="RjS"> Rejection Sampling </label><br>
-            &emsp;&emsp;&emsp;
-            <input type="radio" id="MHS" name="AI_options" value="mh" disabled="true" onclick="ToggleLevel_2()">
-            <label class="label-inline" for="MHS"> Metropolis Hastings Sampling </label><br>
-            &emsp;&emsp;&emsp;
-            <input type="radio" id="GS" name="AI_options" value="gibbs" disabled="true" onclick="ToggleLevel_2()">
-            <label class="label-inline" for="GS"> Gibbs Sampling </label><br> &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-            <label class="label-inline" for="Blocks"> blocks (int) </label>&emsp;
-            <input type="text" id="Blocks" name="Blocks" placeholder="int" disabled="true" value="{{ request.form['Blocks'] }}">
+                        <br>
+                        <!-- END checkboxes for Approximate Inference -->
+                    
+                    <input type="radio" id="MapInf" name="options" value="Map Inference" onclick="ToggleLevel_1();">
+                    <label style="font-weight: bold;" class="label-inline" for="MapInf"> Map Inference </label> &emsp;&emsp;&emsp;&emsp;
+                    <input type="checkbox" id="Upper" name="Upper" value="False" onclick="upper_click();">
+                    <label class="label-inline" for="Upper" id="up_label"> upper [False] </label>
+                    <br>
 
-            <br>
-            <!-- END checkboxes for Approximate Inference -->
-        
-        <input type="radio" id="MapInf" name="options" value="Map Inference" onclick="ToggleLevel_1();">
-        <label class="label-inline" for="MapInf"> Map Inference </label> &emsp;&emsp;&emsp;&emsp;
-        <input type="checkbox" id="Upper" name="Upper" value="False" onclick="upper_click();">
-        <label class="label-inline" for="Upper" id="up_label"> upper [False] </label>
-        <br>
+                    <input type="radio" id="Abd" name="options" value="Abduction" onclick="ToggleLevel_1();">
+                    <label style="font-weight: bold;" class="label-inline" for="Abd"> Abduction </label><br>
+                    
+                    <input type="radio" id="PL" name="options" value="Parameter Learning" onclick="ToggleLevel_1();">
+                    <label style="font-weight: bold;" class="label-inline" for="PL"> Parameter Learning </label> 
+                    - (if no query needed) ==>
+                    <input type="checkbox" id="fillQuery" name="fillQuery" onchange="FillTheQuery()">
+                    <label class="label-inline" for="fillQuery"> fill query with "none" </label>
+                    <br>
+                    <!-- END checkbox -->
 
-        <input type="radio" id="Abd" name="options" value="Abduction" onclick="ToggleLevel_1();">
-        <label class="label-inline" for="Abd"> Abduction </label><br><br>
-        
-        <input type="radio" id="PL" name="options" value="Parameter Learning" onclick="ToggleLevel_1();">
-        <label class="label-inline" for="PL"> Parameter Learning </label> 
-        - (if no query needed) ==>
-        <input type="checkbox" id="fillQuery" name="fillQuery" onchange="FillTheQuery()">
-        <label class="label-inline" for="fillQuery"> fill query with "none" </label>
-        <br>
-        <!-- END checkbox -->
+                    <input class="button" type="submit" value="Submit">
+                    <input type="reset" value="Reset" onclick="ResetAll();"> 
+                    <br>
+                    <!-- OUTPUT programma -->
+                </fieldset>
+            </form>
+            <label style="font-weight: bold;" for="outputPr"> Show Results: </label>
+            {% for message in get_flashed_messages() %}
+            <div class="alert">{{ message }}</div>
+            {% endfor %}
+            <textarea style="height: 300px;" rows="10" cols="60" name="outputPr" placeholder="output shown here">{{CodeOut}}</textarea><br>
+        </section>
+        <br><br><br><br><br><br><br>
+    </main>
 
-        <input class="button" type="submit" value="Submit">
-        <input type="reset" value="Reset" onclick="ResetAll();"> 
-        <br>
-        <!-- OUTPUT programma -->
-    </div>
-    </fieldset>
-</form>
-Show Results: 
-{% for message in get_flashed_messages() %}
-<div class="alert">{{ message }}</div>
-{% endfor %}
-<br>
-<textarea rows="10" cols="60" name="outputPr" placeholder="output shown here">{{CodeOut}}</textarea><br><br>
 
 <script>
     var ProgramText = document.getElementById("inputPr");
@@ -127,6 +137,17 @@ Show Results:
     var inc_label = document.getElementById('inc_label');
     var Normalize = document.getElementById('normalize');
     var norm_label = document.getElementById('norm_label');
+
+    const tx = document.getElementsByTagName("textarea");
+    for (let i = 0; i < tx.length; i++) {
+        tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
+        tx[i].addEventListener("input", OnInput, false);
+    }
+    function OnInput() {
+        this.style.height = 0;
+        this.style.height = (this.scrollHeight) + "px";
+    }
+
 
     function inconsistent_click(){
         if (Inconsistent.checked){
