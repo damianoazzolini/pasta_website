@@ -18,6 +18,8 @@ def test_form_post_EXACT_INFERENCE(client, app):
     responde = client.post("/", data={
         "inputPr":program,
         "inputQ":"fly",
+        "inconsistent": False,
+        "normalize": False,
         "inputEv":"",
         "options":"Exact Inference"
     })
@@ -35,6 +37,8 @@ def test_form_post_APPROXIMATE_INFERENCE(client, app):
         responde = client.post("/", data={
             "inputPr":program,
             "inputQ":"fly(1)",
+            "inconsistent": False,
+            "normalize": False,
             "inputEv":"",
             "options":"Approximate Inference",
             "nSamples":"1000",
@@ -56,6 +60,8 @@ def test_form_post_MAP_INFERENCE(client, app):
         responde = client.post("/", data={
             "inputPr":program,
             "inputQ":"valuable(1)",
+            "inconsistent": False,
+            "normalize": False,
             "inputEv":"", #never used
             "options":"Map Inference",
             "Upper": upper
@@ -74,6 +80,8 @@ def test_form_post_ABDUCTION(client, app):
         responde = client.post("/", data={
             "inputPr":program,
             "inputQ":"fly(1)",
+            "inconsistent":False,
+            "normalize":False,
             "inputEv":"", #never used
             "options":"Abduction",
             "Upper":upper
@@ -92,6 +100,8 @@ def test_form_post_PARAMETER_LEARNING(client, app):
         responde = client.post("/", data={
             "inputPr":program,
             "inputQ":"none",
+            #"inconsistent":False,
+            #"normalize":False,
             "inputEv":"", #never used
             "options":"Parameter Learning",
             "Upper":upper

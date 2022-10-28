@@ -20,11 +20,11 @@ python3 -m venv venv
 ```
 . venv/bin/activate
 ```
-The requirements for this application is just flask `Flask` as [Pasta](https://github.com/damianoazzolini/) is connected as a subdirectory to this package and doesn't need to be installed inside the `venv`
+The requirements for this application are `Flask` and `pytest` for the interface and `clingo` and `numpy` for the Pasta submodule. <br/> Install them with:
 ```
 pip install -r requirements.txt
 ```
-<br />
+be shure you are inside the `venv` while installing
 
 ## Create a local Database
 We'll use sqlite3 for this application. <br />
@@ -48,9 +48,10 @@ Note: the only way to have an empty db is to delete the "flaskr.sqlite" file and
 ## Run tests
 To run tests you can use:
 ```
-python3 -m pytest
+python3 -m pytest --ignore=pasta/
 ```
-<br />
+remember to ignore pasta/ folder to avoid errors since Pasta dependencies are installed inside the venv and not globally
+and we want to test only the application.
 
 ## RUN THE WEBSITE (locally)
 As long as you are still inside the `venv` you can start your web application:

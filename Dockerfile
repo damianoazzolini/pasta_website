@@ -17,12 +17,7 @@ RUN rm -r pasta
 COPY /pasta/pasta/ ./pasta/pasta
 
 #### Install requirements
-
-#same as requirements.txt
-RUN pip install flask
-#manually install pasta dependencies
-RUN python3 -m pip install clingo
-RUN python3 -m pip install numpy
+RUN pip install -r requirements.txt
 
 #create empty db
 RUN flask --app flaskr init-db

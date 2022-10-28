@@ -1,3 +1,4 @@
 Flask
 clingo
 numpy
+pytest
