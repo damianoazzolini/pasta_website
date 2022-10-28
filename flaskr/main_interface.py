@@ -6,6 +6,11 @@ import pasta_solver
 from flaskr.__init__ import *
 from flaskr.db import get_db
 from io import StringIO 
+import signal
+
+def handler(signum, frame):
+    print("Timed out!")
+    raise Exception("Timed out!")
 
 class arguments: #for approximate inference
     rejection : bool
@@ -21,6 +26,8 @@ def sitoHTML():
         return render_template("sitoHTML.html")
 
     elif request.method == "POST":          ####POST call
+        signal.signal(signal.SIGALRM, handler)
+        signal.alarm(20)
         old_stdout = sys.stdout             #redirect stdout
         sys.stdout = mystdout = StringIO()
         db = get_db()
@@ -36,7 +43,6 @@ def sitoHTML():
         RadioButton2 = "none"
         nSamples = 0
         Blocks = 0
-
         if (not RadioButton1):
             flash("SELECT ONE OPTIONS!")    #porbably not needed - handled by HTML page
         if (not Query and RadioButton1!="Parameter Learning"):
@@ -107,13 +113,18 @@ def sitoHTML():
             #                           MAP INFERENCE                           #
             #####################################################################
             elif (RadioButton1 == "Map Inference"):
-                solver = pasta_solver.Pasta("", Query)
+                solver = pasta_solver.Pasta("", Query)    
                 solver.stop_if_inconsistent = Inconsistent
                 solver.normalize_prob = Normalize
-
+                
                 if Upper:
                     solver.consider_lower_prob = False
-                    
+                """
+                if (Upper and not (Normalize or Inconsistent)) and Solver:
+                    max_p, atoms_list = solver.upper_mpe_inference(ProgramCode)
+                else: 
+                    max_p, atoms_list = solver.map_inference(ProgramCode)
+                """
                 max_p, atoms_list = solver.map_inference(ProgramCode)
                 map_op = len(atoms_list) > 0 and len(atoms_list[0]) == len(solver.interface.prob_facts_dict)
                 map_or_mpe = "MPE" if map_op else "MAP"
@@ -151,8 +162,8 @@ def sitoHTML():
                     solver = pasta_solver.Pasta("", "")
                 else:
                     solver = pasta_solver.Pasta("", Query)
-                solver.stop_if_inconsistent = Inconsistent
-                solver.normalize_prob = Normalize
+                #solver.stop_if_inconsistent = Inconsistent
+                #solver.normalize_prob = Normalize
 
                 if Upper:
                     solver.consider_lower_prob = False
@@ -169,10 +180,14 @@ def sitoHTML():
             answer = errore
 
         finally:
-            if (RadioButton1 == "Parameter Learning"):
+            signal.alarm(0) #reset the timer
+            if (RadioButton1 == "Parameter Learning" or "Approximate Inference"): #warnings are on 'answer' for PL - for AI there is a loading bar (annoying)
                 warnings_stdout = ""
             else:
-                warnings_stdout = "\n######################################\n" + mystdout.getvalue()
+                warnings_stdout = mystdout.getvalue()
+            
+            if (warnings_stdout != ""): #if there are warnings split them from the answer
+                warnings_stdout = "\n\n######################################\n\n" + warnings_stdout
             sys.stdout = old_stdout
             try:
                 db.execute(
