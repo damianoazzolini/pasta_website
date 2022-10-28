@@ -1,22 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
+<!-- Google Fonts -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
+
+<!-- CSS Reset -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css">
+
+<!-- Milligram CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.css">
 <title>PASTA WEBSITE</title>
 </head>
 <body>
+    <header style="text-align:center;" class="header" id="home">
+        <nav style="background-color:rgba(171, 150, 255, 0.249);" class="navigation">            
+            <h3>
+                <a style="color:rgb(192, 105, 255);;" href="..">⌂HOME</a>
+                ◄►
+                <a style="color:rgb(192, 105, 255);" href="documentation.html">Documentation</a> --
+                <a style="color:rgb(192, 105, 255);" href="about.html">About</a> -- 
+                Examples
+                ◄►
+            </h3>
+        </nav>
+        
+        <section class="container">
+            <h2>EXAMPLES</h2>
+        </section>
+    </header>
+    <section style="background-color:rgba(239, 150, 255, 0.2);" class="container">
 
-<h1>EXAMPLES</h1>
-
-<h3>
-    <a href="..">HOME</a>
-    |_/\_|
-    <a href="documentation.html">Documentation</a> --
-    <a href="about.html">About</a> -- 
-    Examples
-    |_/\_|
-</h3>
-
-FILE 1 - bird_4_cond.lp<br><br>
+FILE 1 - bird_4_cond.lp<br>
 <textarea rows="20" cols="80" name="file1" id="file1" readonly>% there are 4 birds
 bird(1).
 bird(2).
@@ -49,7 +63,7 @@ fly:- fly_w(1).
 <input type="submit" value="copy to HOME" onclick="sendText(document.getElementById('file1').id)"><br><br>
 
 <!--####################################################################################################-->
-FILE 2 - bird_4.lp<br><br>
+FILE 2 - bird_4.lp<br>
 <textarea rows="20" cols="80" name="file2" id="file2" readonly>% There are 4 birds (indexed with 1,2,3, and 4), each one with 
 % probability 0.5
 0.5::bird(1).
@@ -72,110 +86,121 @@ FILE 2 - bird_4.lp<br><br>
 <input type="submit" value="copy to HOME" onclick="sendText(document.getElementById('file2').id)"><br><br>
 
 <!--####################################################################################################-->
-FILE 3 - gold_map.lp<br><br>
+FILE 3 - gold_map.lp<br>
 <textarea rows="20" cols="80" name="file3" id="file3" readonly>map 0.2::gold(1).
-    0.3::gold(2).
-    map 0.7::gold(3).
-    
-    valuable(X) ; not_valuable(X):- gold(X).
-    
-    :- #count{X:valuable(X), gold(X)} = FB, #count{X:gold(X)} = B, 10*FB < 6*B.
-    
-    % python3 pasta_solver.py gold_map.lp --query="valuable(1)" --map
-    % MAP: 0.060000000000000005
-    % Map states: 1
-    % State 0: ['gold(1)', 'not gold(3)']
-    
-    % python3 pasta_solver.py gold_map.lp --query="valuable(1)" --map --upper
-    % MAP: 0.13999999999999999
-    % Map states: 1
-    % State 0: ['gold(1)', 'gold(3)']</textarea><br>
+0.3::gold(2).
+map 0.7::gold(3).
+
+valuable(X) ; not_valuable(X):- gold(X).
+
+:- #count{X:valuable(X), gold(X)} = FB, #count{X:gold(X)} = B, 10*FB < 6*B.
+
+% python3 pasta_solver.py gold_map.lp --query="valuable(1)" --map
+% MAP: 0.060000000000000005
+% Map states: 1
+% State 0: ['gold(1)', 'not gold(3)']
+
+% python3 pasta_solver.py gold_map.lp --query="valuable(1)" --map --upper
+% MAP: 0.13999999999999999
+% Map states: 1
+% State 0: ['gold(1)', 'gold(3)']</textarea><br>
 <input type="submit" value="copy to HOME" onclick="sendText(document.getElementById('file3').id)"><br><br>
 
 <!--####################################################################################################-->
-FILE 4 - bird_4_abd_prob.lp<br><br>
+FILE 4 - bird_4_abd_prob.lp<br>
 <textarea rows="20" cols="80" name="file4" id="file4" readonly>% 4 probabilistic birds
-    0.5::bird(1).
-    0.5::bird(2).
-    0.5::bird(3).
-    0.5::bird(4).
-    
-    % 4 abducibles
-    abducible fa(1).
-    abducible fa(2).
-    abducible fa(3).
-    abducible fa(4).
-    
-    % A bird can fly or not fly
-    fly(X);nofly(X):- bird(X), fa(X).
-    % fly(X);nofly(X):- bird(X).
-    
-    % Constraint: at least 60% of the birds fly
-    :- #count{X:fly(X),bird(X),fa(X)} = FB, #count{X:bird(X),fa(X)} = B, 10*FB<6*B.
-    % :- #count{X:fly(X),bird(X)} = FB, #count{X:bird(X)} = B, 10*FB<6*B.
-    
-    % Query fly(1)
-    % Expected: lp == up == 0.5
-    % Abd = {fa(1)}
-    
-    % if we add the constraint that at least three abducibles
-    % should be selected
-    % at least 3 abducibles
-    % :- C = #count{X : fa(X)}, C < 3.
-    % we get:
-    % Lower probability for the query: 0.375
-    % Upper probability for the query: 0.5
-    % Abductive explanations: 3
-    % Explanation 0
-    % ['fa(1)', 'fa(2)', 'fa(4)']
-    % Explanation 1
-    % ['fa(1)', 'fa(2)', 'fa(3)']
-    % Explanation 2
-    % ['fa(1)', 'fa(3)', 'fa(4)']</textarea><br>
+0.5::bird(1).
+0.5::bird(2).
+0.5::bird(3).
+0.5::bird(4).
+
+% 4 abducibles
+abducible fa(1).
+abducible fa(2).
+abducible fa(3).
+abducible fa(4).
+
+% A bird can fly or not fly
+fly(X);nofly(X):- bird(X), fa(X).
+% fly(X);nofly(X):- bird(X).
+
+% Constraint: at least 60% of the birds fly
+:- #count{X:fly(X),bird(X),fa(X)} = FB, #count{X:bird(X),fa(X)} = B, 10*FB<6*B.
+% :- #count{X:fly(X),bird(X)} = FB, #count{X:bird(X)} = B, 10*FB<6*B.
+
+% Query fly(1)
+% Expected: lp == up == 0.5
+% Abd = {fa(1)}
+
+% if we add the constraint that at least three abducibles
+% should be selected
+% at least 3 abducibles
+% :- C = #count{X : fa(X)}, C < 3.
+% we get:
+% Lower probability for the query: 0.375
+% Upper probability for the query: 0.5
+% Abductive explanations: 3
+% Explanation 0
+% ['fa(1)', 'fa(2)', 'fa(4)']
+% Explanation 1
+% ['fa(1)', 'fa(2)', 'fa(3)']
+% Explanation 2
+% ['fa(1)', 'fa(3)', 'fa(4)']</textarea><br>
 <input type="submit" value="copy to HOME" onclick="sendText(document.getElementById('file4').id)"><br><br>
 
 <!--####################################################################################################-->
-FILE 5 - background_bayesian_network.lp<br><br>
+FILE 5 - background_bayesian_network.lp<br>
 <textarea rows="20" cols="80" name="file5" id="file5" readonly>% From: https://dtai.cs.kuleuven.be/problog/tutorial/learning/01_bayes.html
 
-    #program('
-    0.2::earthquake.
-    
-    alarm0 :- burglary, earthquake, p_alarm1.
-    alarm1 :- burglary, not earthquake, p_alarm2.
-    alarm2 :- not burglary, earthquake, p_alarm3.
-    
-    alarm:- alarm0.
-    alarm:- alarm1.
-    alarm:- alarm2.
-    ').
-    
-    #learnable(burglary).
-    #learnable(p_alarm1).
-    #learnable(p_alarm2).
-    #learnable(p_alarm3).
-    
-    #negative(1,burglary).
-    #negative(1,alarm).
-    
-    #negative(2,earthquake).
-    #positive(2,alarm).
-    #positive(2,burglary).
-    
-    #negative(3,burglary).
-    
-    #train(1,2,3).
-    #test(1,2,3).
-    
-    % Expected
-    % Iterations: 71
-    % {'burglary': 0.3333333333333333, 'p_alarm1': 0.5, 'p_alarm2': 0.9986666666666667, 'p_alarm3': 0.000}</textarea><br>
-<input type="submit" value="copy to HOME" onclick="sendText(document.getElementById('file5').id)"><br><br>
+#program('
+0.2::earthquake.
 
+alarm0 :- burglary, earthquake, p_alarm1.
+alarm1 :- burglary, not earthquake, p_alarm2.
+alarm2 :- not burglary, earthquake, p_alarm3.
 
+alarm:- alarm0.
+alarm:- alarm1.
+alarm:- alarm2.
+').
+
+#learnable(burglary).
+#learnable(p_alarm1).
+#learnable(p_alarm2).
+#learnable(p_alarm3).
+
+#negative(1,burglary).
+#negative(1,alarm).
+
+#negative(2,earthquake).
+#positive(2,alarm).
+#positive(2,burglary).
+
+#negative(3,burglary).
+
+#train(1,2,3).
+#test(1,2,3).
+
+% Expected
+% Iterations: 71
+% {'burglary': 0.3333333333333333, 'p_alarm1': 0.5, 'p_alarm2': 0.9986666666666667, 'p_alarm3': 0.000}</textarea><br>
+<input type="submit" value="copy to HOME" onclick="sendText(document.getElementById('file5').id)"><br><br><br><br><br><br>
+
+</section>
 
 
 <script>
+
+    const tx = document.getElementsByTagName("textarea");
+    for (let i = 0; i < tx.length; i++) {
+        tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
+        tx[i].addEventListener("input", OnInput, false);
+    }
+    function OnInput() {
+        this.style.height = 0;
+        this.style.height = (this.scrollHeight) + "px";
+    }
+
     const url = ".."
 
     function sendText(textID){
