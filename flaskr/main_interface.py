@@ -26,7 +26,7 @@ def sitoHTML():
         return render_template("sitoHTML.html")
 
     elif request.method == "POST":          ####POST call
-        signal.signal(signal.SIGALRM, handler)
+        #signal.signal(signal.SIGALRM, handler)
         signal.alarm(20)
         old_stdout = sys.stdout             #redirect stdout
         sys.stdout = mystdout = StringIO()
