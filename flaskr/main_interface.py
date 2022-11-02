@@ -7,7 +7,9 @@ from flaskr.__init__ import *
 from flaskr.db import get_db
 from io import StringIO
 import time
-import signal, os
+import signal
+
+
 
 class arguments: #for approximate inference
     rejection : bool
@@ -17,16 +19,16 @@ class arguments: #for approximate inference
 
 bp = Blueprint('main_interface', __name__, url_prefix='/')
 
-def handler(signum, stack):
-    os.abort()
-signal.signal(signal.SIGALRM, handler)
-
 @bp.route("/", methods=["POST","GET"]) 
 def sitoHTML():
+
     if request.method == "GET":             #### GET call
         return render_template("sitoHTML.html")
 
     elif request.method == "POST":          #### POST call
+        def signal_handler(signum, frame):
+            print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+        signal.signal(signal.SIGALRM, signal_handler)
         old_stdout = sys.stdout             #redirect stdout
         sys.stdout = mystdout = StringIO()
 
@@ -195,13 +197,14 @@ def sitoHTML():
                 raise Exception("OPTION 1 ERROR (CASE)")
             errore = "ALL OK"
 
-        except Exception as error:
-            flash("OPS! SOMETHING WENT WRONG")
-            errore = "ERROR: " + str(error.args)
-            answer = errore
-
+        except:
+            answer = "TIMEOUT"
+            """except Exception as error:
+                flash("OPS! SOMETHING WENT WRONG")
+                errore = "ERROR: " + str(error.args)
+                answer = errore
+            """
         finally:
-
             sys.stdout = old_stdout
             if (RadioButton1 == "Parameter Learning"): #warnings are already on 'answer' for PL
                 warnings_stdout = ""
@@ -218,12 +221,13 @@ def sitoHTML():
             try:
                 db.execute(
                     "INSERT INTO Request (program    , query, evidence, option_1         , option_2    , nSamples     , blocks     , upper     , errors) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                                         (ProgramCode, Query, Evidence, str(RadioButton1), RadioButton2, str(nSamples), str(Blocks), str(Upper), errore)
+                                        (ProgramCode, Query, Evidence, str(RadioButton1), RadioButton2, str(nSamples), str(Blocks), str(Upper), errore)
                 )
                 db.commit()
             except:
                 print("\nERRORE DATABASE !!!")
 
         return render_template("sitoHTML.html",CodeOut = answer + warnings_stdout) 
+
 
     
