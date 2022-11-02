@@ -5,12 +5,9 @@ sys.path.append("pasta/pasta")                              #otherwise flask won
 import pasta_solver
 from flaskr.__init__ import *
 from flaskr.db import get_db
-from io import StringIO 
-import signal
-
-def handler(signum, frame):
-    print("Timed out!")
-    raise Exception("Timed out!")
+from io import StringIO
+import time
+import signal, os
 
 class arguments: #for approximate inference
     rejection : bool
@@ -20,22 +17,25 @@ class arguments: #for approximate inference
 
 bp = Blueprint('main_interface', __name__, url_prefix='/')
 
+def handler(signum, stack):
+    os.abort()
+signal.signal(signal.SIGALRM, handler)
+
 @bp.route("/", methods=["POST","GET"]) 
 def sitoHTML():
-    if request.method == "GET":             ####GET call
+    if request.method == "GET":             #### GET call
         return render_template("sitoHTML.html")
 
-    elif request.method == "POST":          ####POST call
-        #signal.signal(signal.SIGALRM, handler)
-        signal.alarm(20)
+    elif request.method == "POST":          #### POST call
         old_stdout = sys.stdout             #redirect stdout
         sys.stdout = mystdout = StringIO()
+
         db = get_db()
         answer =""
-        ProgramCode = str(request.form["inputPr"])   #1 textbox
-        Query = str(request.form["inputQ"])          #2 textbox
-        Evidence = str(request.form["inputEv"])           #3 textbox
-        RadioButton1 = str(request.form["options"])  #one of 5 radio button
+        ProgramCode = str(request.form["inputPr"])      #1 textbox
+        Query = str(request.form["inputQ"])             #2 textbox
+        Evidence = str(request.form["inputEv"])         #3 textbox
+        RadioButton1 = str(request.form["options"])     #one of 5 radio button
         Inconsistent = bool(request.form.get("inconsistent"))
         Normalize = bool(request.form.get("normalize"))
         Upper = bool(request.form.get("Upper"))
@@ -48,7 +48,12 @@ def sitoHTML():
         if (not Query and RadioButton1!="Parameter Learning"):
             flash("QUERY MUST BE FILLED")
 
+        with open('tmpFile.lp', 'w') as f:
+            f.write(ProgramCode)
+
         try:
+            signal.alarm(5)
+            time.sleep(10)
             
             #####################################################################
             #                           EXACT INFERENCE                         #
@@ -158,16 +163,32 @@ def sitoHTML():
             #####################################################################
             elif (RadioButton1 == "Parameter Learning"):
 
-                if (Query == "none"):
-                    solver = pasta_solver.Pasta("", "")
-                else:
-                    solver = pasta_solver.Pasta("", Query)
+                #if (Query == "none"):
+                #    solver = pasta_solver.Pasta("", "")
+                #else:
+                #    solver = pasta_solver.Pasta("", Query)
+                #
+                #if Upper:
+                #    solver.consider_lower_prob = False
+                #
                 #solver.stop_if_inconsistent = Inconsistent
                 #solver.normalize_prob = Normalize
+                #solver.parameter_learning(ProgramCode)
+
+                #------------------------------------
+                if (Query == "none"):
+                    solver = pasta_solver.Pasta("tmpFile.lp", "")
+                else:
+                    solver = pasta_solver.Pasta("tmpFile.lp", Query)
 
                 if Upper:
                     solver.consider_lower_prob = False
-                solver.parameter_learning(ProgramCode)
+
+                solver.stop_if_inconsistent = Inconsistent
+                solver.normalize_prob = Normalize
+                solver.parameter_learning()
+                #------------------------------------
+
                 answer = mystdout.getvalue()
             #####################################################################
             else:
@@ -180,19 +201,24 @@ def sitoHTML():
             answer = errore
 
         finally:
-            signal.alarm(0) #reset the timer
-            if (RadioButton1 == "Parameter Learning" or "Approximate Inference"): #warnings are on 'answer' for PL - for AI there is a loading bar (annoying)
+
+            sys.stdout = old_stdout
+            if (RadioButton1 == "Parameter Learning"): #warnings are already on 'answer' for PL
                 warnings_stdout = ""
             else:
                 warnings_stdout = mystdout.getvalue()
+                #remove colors of stdout
+                warnings_stdout = warnings_stdout.replace('\033[91m','')
+                warnings_stdout = warnings_stdout.replace('\033[93m','')
+                warnings_stdout = warnings_stdout.replace('\033[0m','')
             
-            if (warnings_stdout != ""): #if there are warnings split them from the answer
+            if (warnings_stdout != ""): #if there are warnings split them away from the answer
                 warnings_stdout = "\n\n######################################\n\n" + warnings_stdout
-            sys.stdout = old_stdout
+            
             try:
                 db.execute(
-                    "INSERT INTO Request (program, query, evidence, option_1, option_2, nSamples, blocks, upper, errors) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                                        (ProgramCode, Query, Evidence, str(RadioButton1), RadioButton2, str(nSamples), str(Blocks), str(Upper), errore)
+                    "INSERT INTO Request (program    , query, evidence, option_1         , option_2    , nSamples     , blocks     , upper     , errors) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                                         (ProgramCode, Query, Evidence, str(RadioButton1), RadioButton2, str(nSamples), str(Blocks), str(Upper), errore)
                 )
                 db.commit()
             except:

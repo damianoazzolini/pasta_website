@@ -44,13 +44,13 @@
 
                     <!-- query -->
                     <label for="inputQ"> Query </label>
-                    <input style="width: 250px;" type="text" id="inputQ" name="inputQ" placeholder="string" onchange="FillTheQuery();" required value={{ request.form['inputQ'] }}>
+                    <input style="width: 250px;" type="text" id="inputQ" name="inputQ" placeholder="string" onchange="FillTheQuery()" required value={{ request.form['inputQ'] }}>
                     &emsp;  Must fill
                     <br>&emsp;&emsp;
-                    <input type="checkbox" id="inconsistent" name="inconsistent" value="False" onclick="inconsistent_click();">
-                    <label class="label-inline" for="inconsistent" id="inc_label"> inconsistent [False]</label>
+                    <input type="checkbox" id="inconsistent" name="inconsistent" value="True" checked onclick="inconsistent_click()">
+                    <label class="label-inline" for="inconsistent" id="inc_label"> stop if inconsistent [True]</label>
                     <br>&emsp;&emsp;
-                    <input type="checkbox" id="normalize" name="normalize" value="False" onclick="normalize_click();">
+                    <input type="checkbox" id="normalize" name="normalize" value="False" onclick="normalize_click()">
                     <label class="label-inline" for="normalize" id="norm_label"> normalize [False]</label>
                     <br>
                     <!-- evidenza -->
@@ -60,10 +60,10 @@
                     <br><br>
 
                     <!-- checkbox -->
-                    <input type="radio" id="ExInf" name="options" value="Exact Inference" checked onclick="ToggleLevel_1();">
+                    <input type="radio" id="ExInf" name="options" value="Exact Inference" checked onclick="ToggleLevel_1()">
                     <label style="font-weight: bold;" class="label-inline" for="ExInf"> Exact Inference </label><br>
 
-                    <input type="radio" id="AppInf" name="options" value="Approximate Inference" onclick="ToggleLevel_1();">
+                    <input type="radio" id="AppInf" name="options" value="Approximate Inference" onclick="ToggleLevel_1()">
                     <label style="font-weight: bold;" class="label-inline" for="AppInf"> Approximate Inference </label><br>
                         <!-- checkboxes for Approximate Inference -->
                         &emsp;&emsp;&emsp;
@@ -84,16 +84,16 @@
                         <br>
                         <!-- END checkboxes for Approximate Inference -->
                     
-                    <input type="radio" id="MapInf" name="options" value="Map Inference" onclick="ToggleLevel_1();">
+                    <input type="radio" id="MapInf" name="options" value="Map Inference" onclick="ToggleLevel_1()">
                     <label style="font-weight: bold;" class="label-inline" for="MapInf"> Map Inference </label> &emsp;&emsp;&emsp;&emsp;
-                    <input type="checkbox" id="Upper" name="Upper" value="False" onclick="upper_click();">
+                    <input type="checkbox" id="Upper" name="Upper" value="False" onclick="upper_click()">
                     <label class="label-inline" for="Upper" id="up_label"> upper [False] </label>
                     <br>
 
-                    <input type="radio" id="Abd" name="options" value="Abduction" onclick="ToggleLevel_1();">
+                    <input type="radio" id="Abd" name="options" value="Abduction" onclick="ToggleLevel_1()">
                     <label style="font-weight: bold;" class="label-inline" for="Abd"> Abduction </label><br>
                     
-                    <input type="radio" id="PL" name="options" value="Parameter Learning" onclick="ToggleLevel_1();">
+                    <input type="radio" id="PL" name="options" value="Parameter Learning" onclick="ToggleLevel_1()">
                     <label style="font-weight: bold;" class="label-inline" for="PL"> Parameter Learning </label> 
                     - (if no query needed) ==>
                     <input type="checkbox" id="fillQuery" name="fillQuery" onchange="FillTheQuery()">
@@ -102,7 +102,7 @@
                     <!-- END checkbox -->
 
                     <input class="button" type="submit" value="Submit">
-                    <input type="reset" value="Reset" onclick="ResetAll();"> 
+                    <input type="reset" value="Reset" onclick="ResetAll()"> 
                     <br>
                     <!-- OUTPUT programma -->
                 </fieldset>
@@ -131,12 +131,11 @@
     //var Abduction = document.getElementById("Abd");
     //var ParameterLearning = document.getElementById("PL");
     var Upper = document.getElementById("Upper");
-    var norm_label = document.getElementById('norm_label');
+    var norm_label = document.getElementById("norm_label");
     var fillQuery = document.getElementById("fillQuery");
-    var Inconsistent = document.getElementById('inconsistent');
-    var inc_label = document.getElementById('inc_label');
-    var Normalize = document.getElementById('normalize');
-    var norm_label = document.getElementById('norm_label');
+    var Inconsistent = document.getElementById("inconsistent");
+    var inc_label = document.getElementById("inc_label");
+    var Normalize = document.getElementById("normalize");
 
     const tx = document.getElementsByTagName("textarea");
     for (let i = 0; i < tx.length; i++) {
@@ -151,10 +150,10 @@
 
     function inconsistent_click(){
         if (Inconsistent.checked){
-            inc_label.innerHTML = "inconsistent [True]";
+            inc_label.innerHTML = "stop if inconsistent [True]";
             Inconsistent.value = "True";
         }else{
-            inc_label.innerHTML = "inconsistent [False]";
+            inc_label.innerHTML = "stop if inconsistent [False]";
             Inconsistent.value = "False";
         }
     }
