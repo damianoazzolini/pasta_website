@@ -1,4 +1,4 @@
-from flask import render_template, request, flash, Blueprint
+from flask import render_template, request, flash, Blueprint,copy_current_request_context
 import sys
 #sys.path.append("venv/lib/python3.8/site-packages/pasta")  #otherwise flask won't find it
 sys.path.append("pasta/pasta")                              #otherwise flask won't find it
@@ -6,18 +6,15 @@ import pasta_solver
 from flaskr.__init__ import *
 from flaskr.db import get_db
 from io import StringIO
-import time
-import signal
 
 
+bp = Blueprint('main_interface', __name__, url_prefix='/')
 
 class arguments: #for approximate inference
     rejection : bool
     mh : bool
     gibbs : bool
     block : int
-
-bp = Blueprint('main_interface', __name__, url_prefix='/')
 
 @bp.route("/", methods=["POST","GET"]) 
 def sitoHTML():
@@ -26,9 +23,6 @@ def sitoHTML():
         return render_template("sitoHTML.html")
 
     elif request.method == "POST":          #### POST call
-        def signal_handler(signum, frame):
-            print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-        signal.signal(signal.SIGALRM, signal_handler)
         old_stdout = sys.stdout             #redirect stdout
         sys.stdout = mystdout = StringIO()
 
@@ -52,11 +46,8 @@ def sitoHTML():
 
         with open('tmpFile.lp', 'w') as f:
             f.write(ProgramCode)
-
+        
         try:
-            signal.alarm(5)
-            time.sleep(10)
-            
             #####################################################################
             #                           EXACT INFERENCE                         #
             #####################################################################
@@ -197,13 +188,11 @@ def sitoHTML():
                 raise Exception("OPTION 1 ERROR (CASE)")
             errore = "ALL OK"
 
-        except:
-            answer = "TIMEOUT"
-            """except Exception as error:
-                flash("OPS! SOMETHING WENT WRONG")
-                errore = "ERROR: " + str(error.args)
-                answer = errore
-            """
+        except Exception as error:
+            flash("OPS! SOMETHING WENT WRONG")
+            errore = "ERROR: " + str(error.args)
+            answer += errore
+        
         finally:
             sys.stdout = old_stdout
             if (RadioButton1 == "Parameter Learning"): #warnings are already on 'answer' for PL
@@ -228,6 +217,3 @@ def sitoHTML():
                 print("\nERRORE DATABASE !!!")
 
         return render_template("sitoHTML.html",CodeOut = answer + warnings_stdout) 
-
-
-    
