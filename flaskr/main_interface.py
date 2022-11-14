@@ -7,7 +7,6 @@ from flaskr.__init__ import *
 from flaskr.db import get_db
 from io import StringIO
 
-
 bp = Blueprint('main_interface', __name__, url_prefix='/')
 
 class arguments: #for approximate inference
@@ -190,7 +189,10 @@ def sitoHTML():
 
         except Exception as error:
             flash("OPS! SOMETHING WENT WRONG")
-            errore = "ERROR: " + str(error.args)
+            errore = "EXCEPTION ERROR: " + str(error.args)
+            answer += errore
+        except:
+            errore = "UNUSUAL ERROR: " + str(sys.exc_info()) + "\ncheck that inputs are correct"
             answer += errore
         
         finally:
