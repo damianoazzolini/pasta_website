@@ -187,11 +187,11 @@ def sitoHTML():
                 raise Exception("OPTION 1 ERROR (CASE)")
             errore = "ALL OK"
 
-        except Exception as error:
+        except Exception as error:  #catch standard exceptions
             flash("OPS! SOMETHING WENT WRONG")
             errore = "EXCEPTION ERROR: " + str(error.args)
             answer += errore
-        except:
+        except:                     #catch other exceptions
             errore = "UNUSUAL ERROR: " + str(sys.exc_info()) + "\ncheck that inputs are correct"
             answer += errore
         

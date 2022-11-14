@@ -131,21 +131,7 @@ fly(X);nofly(X):- bird(X), fa(X).
 % Query fly(1)
 % Expected: lp == up == 0.5
 % Abd = {fa(1)}
-
-% if we add the constraint that at least three abducibles
-% should be selected
-% at least 3 abducibles
-% :- C = #count{X : fa(X)}, C < 3.
-% we get:
-% Lower probability for the query: 0.375
-% Upper probability for the query: 0.5
-% Abductive explanations: 3
-% Explanation 0
-% ['fa(1)', 'fa(2)', 'fa(4)']
-% Explanation 1
-% ['fa(1)', 'fa(2)', 'fa(3)']
-% Explanation 2
-% ['fa(1)', 'fa(3)', 'fa(4)']</textarea><br>
+</textarea><br>
 <input type="submit" value="copy to HOME" onclick="sendText(document.getElementById('file4').id)"><br><br>
 
 <!--####################################################################################################-->
@@ -191,6 +177,7 @@ alarm:- alarm2.
 
 <script>
 
+    // resize textbox area
     const tx = document.getElementsByTagName("textarea");
     for (let i = 0; i < tx.length; i++) {
         tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
@@ -201,20 +188,21 @@ alarm:- alarm2.
         this.style.height = (this.scrollHeight) + "px";
     }
 
+    // prepare the text to send to 'sitoHTML.html'
     const url = ".."
-
     function sendText(textID){
         if(typeof(Storage)!=="undefined"){
             var Program = document.getElementById(textID);
             localStorage.textToHome = Program.value;
             Program.innerHTML = localStorage.textToHome;
+            localStorage.file = textID;
+            textID.innerHTML = localStorage.file;
         }
         else {
             Program.innerHTML="Sorry, your browser does not support web storage...";
         }
         location.href=url;
     }
-
 
 </script>
 

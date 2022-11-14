@@ -116,7 +116,6 @@
         <br><br><br><br><br><br><br>
     </main>
 
-
 <script>
     var ProgramText = document.getElementById("inputPr");
     var Query = document.getElementById("inputQ");
@@ -127,17 +126,24 @@
     var MetropolisHS = document.getElementById("MHS");
     var GibbsSampling = document.getElementById("GS");
     var Blocks = document.getElementById("Blocks");
-    //var MapInference = document.getElementById("MapInf");
-    //var Abduction = document.getElementById("Abd");
-    //var ParameterLearning = document.getElementById("PL");
+    var MapInference = document.getElementById("MapInf");
+    var Abduction = document.getElementById("Abd");
+    var ParameterLearning = document.getElementById("PL");
     var Upper = document.getElementById("Upper");
     var norm_label = document.getElementById("norm_label");
     var fillQuery = document.getElementById("fillQuery");
     var Inconsistent = document.getElementById("inconsistent");
     var inc_label = document.getElementById("inc_label");
     var Normalize = document.getElementById("normalize");
-
     const tx = document.getElementsByTagName("textarea");
+    
+    // resize textbox area on page load and dinamically
+    window.onload = function() {
+        for (let i = 0; i < tx.length; i++) {
+            tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
+            tx[i].addEventListener("input", OnInput, false);
+        }
+    };
     for (let i = 0; i < tx.length; i++) {
         tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
         tx[i].addEventListener("input", OnInput, false);
@@ -147,7 +153,7 @@
         this.style.height = (this.scrollHeight) + "px";
     }
 
-
+    // change description text for Inconsistent checkbox
     function inconsistent_click(){
         if (Inconsistent.checked){
             inc_label.innerHTML = "stop if inconsistent [True]";
@@ -158,6 +164,7 @@
         }
     }
 
+    // change description text for Normalize checkbox
     function normalize_click(){
         if (Normalize.checked){
             norm_label.innerHTML = "normalize [True]";
@@ -168,6 +175,7 @@
         }
     }
 
+    // change description text for Upper checkbox
     function upper_click(){
         if (Upper.checked){
             up_label.innerHTML = "upper [True]";
@@ -178,15 +186,36 @@
         }
     }
 
+    // copy text sent from Examples tab
+    var exampleID = ''
     if(typeof(Storage)!=="undefined" && localStorage.textToHome){
-        ProgramText.innerHTML=localStorage.textToHome; 
+        ProgramText.innerHTML = localStorage.textToHome; 
+        exampleID = localStorage.file
     }
-    //else{
-    //    ProgramText.innerHTML="Sorry, your browser does not support web storage...";
-    //}
     localStorage.clear();
-    
+    switch(exampleID) {
+    case 'file1':
+        Query.value = 'fly';
+        break;
+    case 'file2':
+    Query.value = 'fly(1)';
+        break;
+    case 'file3':
+        MapInference.checked = true;
+        Query.value = 'valuable(1)';
+        break;
+    case 'file4':
+        Abduction.checked = true;
+        Query.value = 'fly(1)';
+        break;
+    case 'file5':
+        ParameterLearning.checked = true;
+        break;
+    default:
+        // nop
+    } 
 
+    // enable more options if Approximate Inf is selected
     function ToggleLevel_1 () {        
         if (ApproximateInference.checked) {
             nSamples.disabled=false
@@ -209,6 +238,7 @@
         }
     }
 
+    // enable blocks selection if gibbs is selected
     function ToggleLevel_2 () {
         if (GibbsSampling.checked) {
             Blocks.disabled=false
@@ -217,6 +247,7 @@
         }
     }
 
+    // reset button
     function ResetAll () {
         Query.value = ""
         Evidenza.value = ""
@@ -227,12 +258,12 @@
         localStorage.clear();
     }
 
+    // fill query with "none" for no value (usefull only for Parameter Learning)
     function FillTheQuery () {
         if (fillQuery.checked == true){
             Query.value = "none"
         }
     }
-
 </script>
 
 </body>
