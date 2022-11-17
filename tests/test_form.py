@@ -1,5 +1,5 @@
 import pytest
-from flaskr.db import get_db
+from pasta_website.db import get_db
 
 Upper = [True, False]
 AI_options = ["rejection","mh","gibbs"]

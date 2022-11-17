@@ -1,7 +1,7 @@
 import sqlite3
 
 import pytest
-from flaskr.db import get_db
+from pasta_website.db import get_db
 
 """
 GIVEN database
