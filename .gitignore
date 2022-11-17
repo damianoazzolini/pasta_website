@@ -2,13 +2,14 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=python
 
 tokengit.txt
-esempi
 tmpFile.lp
-flaskr/__pycache__
+__pycache__
 */flaskr.sqlite
 .vscode
-pasta-master.zip
 pasta
+dist
+pasta_website.egg-info
+*.egg-info
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/

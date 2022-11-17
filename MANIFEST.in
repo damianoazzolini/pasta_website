@@ -1,0 +1,5 @@
+include pasta_website/pasta_website/schema.sql
+graft pasta_website/pasta_website/static
+graft pasta_website/pasta_website/templates
+global-exclude *.pyc
+global-exclude *.sqlite

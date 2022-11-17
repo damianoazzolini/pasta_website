@@ -1,10 +1,10 @@
-from flask import render_template, request, flash, Blueprint,copy_current_request_context
+from flask import render_template, request, flash, Blueprint
 import sys
-#sys.path.append("venv/lib/python3.8/site-packages/pasta")  #otherwise flask won't find it
-sys.path.append("pasta/pasta")                              #otherwise flask won't find it
+#sys.path.append("venv/lib/python3.8/site-packages/pasta_website/pasta/pasta")  #used when creating the build for a virtualenv
+sys.path.append("pasta/pasta")              #for standard package use as pasta module is supposed to be in the same parent directory          
 import pasta_solver
-from flaskr.__init__ import *
-from flaskr.db import get_db
+from pasta_website.__init__ import *
+from pasta_website.db import get_db
 from io import StringIO
 
 bp = Blueprint('main_interface', __name__, url_prefix='/')
