@@ -6,7 +6,14 @@ First of all you need to clone this repository
 ```
 git clone git@github.com:damianoazzolini/pasta_website.git
 ```
-and add the [Pasta]( https://github.com/damianoazzolini/pasta) submodule (see .gitmodules).
+or
+```
+git clone https://github.com/damianoazzolini/pasta_website
+```
+go inside the project directory (`cd pasta_website`) and add/download the [Pasta]( https://github.com/damianoazzolini/pasta) submodule (with similar command) on the same parent directory.<br/>
+pasta_website<br/>
+└─ pasta_website <br/>
+└─ pasta
 <br />
 
 ## Local installation
@@ -30,7 +37,7 @@ be shure you are inside the `venv` while installing
 We'll use sqlite3 for this application. <br />
 After you've installed it, you can creare your db file:
 ```
-flask --app flaskr init-db
+flask --app pasta_website init-db
 ```
 
 after that you can open it (`venv` not needed this and next step):
@@ -54,13 +61,13 @@ remember to ignore pasta/ folder to avoid errors since Pasta dependencies are in
 and we want to test only the application.
 
 ## RUN THE WEBSITE (locally)
-As long as you are still inside the `venv` you can start your web application:
+As long as you are still inside the `venv` you can start your web application with a local Werkzeug server that comes with Flask (only for development => you should use a WSGI server for production deployment es. Apache2):
 ```
-flask --app flaskr/main_interface run
+flask --app pasta_website/main_interface run
 ```
 optional for debug/programming purpose:
 ```
-flask --app flaskr/main_interface --debug run
+flask --app pasta_website/main_interface --debug run
 ```
 At this point your server will be running at standard ip/port 127.0.0.1:5000 (standard for flask applications). You can add `--host <ip>` to run the app on another ip.
 <br />
@@ -77,3 +84,14 @@ docker run -d -p 5000:5000 <image name>
 ```
 at this point the server will be running locally at `localhost:5000` <br/>
 You can also use [Docker Desktop](https://www.docker.com/products/docker-desktop/) to manage your images and containers.
+## Run with Apache2
+Running the server with Apache2 WSGI Server (mod_wsgi) is pretty simple. <br/>
+Most of the work will be the [Apache](https://httpd.apache.org/) installation itself (and it's dependencies). Installing mod_wsgi requires a compiler and the Apache server and development headers installed. After you've installed it you can install the WSGI server (inside the `venv`)
+```
+pip install mod_wsgi
+```
+and start the Server (locally)
+```
+mod_wsgi-express start-server wsgi.py --processes 4
+```
+see https://flask.palletsprojects.com/en/2.2.x/deploying/mod_wsgi/ for more details and how to run the server on port 80.

@@ -27,4 +27,4 @@ RUN flask --app flaskr init-db
 RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /pastawebsite
 USER appuser
 
-CMD ["flask", "--app", "flaskr/main_interface", "run", "--host=0.0.0.0"]
+CMD ["flask", "--app", "pasta_website/main_interface", "run", "--host=0.0.0.0"]
