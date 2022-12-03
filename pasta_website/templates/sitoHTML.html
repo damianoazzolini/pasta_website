@@ -11,9 +11,11 @@
 <!-- Milligram CSS -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.css">
 
+<link rel="stylesheet" href="../static/website_style.css">
+
 <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 
-<title>PASTA WEBSITE</title>
+<title>PASTA</title>
 </head>
 
 <body>
@@ -21,17 +23,19 @@
         <header style="text-align:center;" class="header" id="home">
             <nav style="background-color:rgba(171, 150, 255, 0.249);" class="navigation">            
                 <h3>
-                    ⌂HOME
-                    ◄►
                     <a style="color:rgb(192, 105, 255);" href="static/documentation.html">Documentation</a> --
                     <a style="color:rgb(192, 105, 255);" href="static/about.html">About</a> --
                     <a style="color:rgb(192, 105, 255);" href="static/examples.html">Examples</a>
-                    ◄►
                 </h3>
             </nav>
             <section class="container">
-                <h1 style="height: 30px; color:rgb(162, 31, 255); font-weight: bold;" class="title">PASTA WEBSITE</h1>
-                <h4>HOME</h4>
+                <h1 style="height: 30px; color:rgb(162, 31, 255); font-weight: bold;" class="title">
+                    PASTA WEBSITE
+                </h1>
+                <br>
+                <h4>
+                    Probabilistic Answer Set Programming on the Web
+                </h4>
             </section>
         </header>
     
@@ -39,12 +43,18 @@
             <form method="POST">
                 <fieldset>
                     <!-- codice programma -->
-                    <label style="font-weight: bold;" for="inputPr"> Input Code </label>
-                    <textarea style="height: 300px;" rows="10" cols="60" name="inputPr" id="inputPr" placeholder="insert code here" required>{{ request.form['inputPr'] }}</textarea><br>
+                    <label style="font-weight: bold;" for="inputPr">
+                        Program 
+                    </label>
+                    <textarea style="height: 300px;" rows="10" cols="60" name="inputPr" id="inputPr" placeholder="Write your code here" class="prog_area" required>{{ request.form['inputPr'] }}</textarea>
+                    
+                    <br>
 
                     <!-- query -->
-                    <label for="inputQ"> Query </label>
-                    <input style="width: 250px;" type="text" id="inputQ" name="inputQ" placeholder="string" onchange="FillTheQuery()" required value={{ request.form['inputQ'] }}>
+                    <label for="inputQ">
+                        Query
+                    </label>
+                    <input style="width: 250px;" type="text" id="inputQ" name="inputQ" placeholder="Query" onchange="FillTheQuery()" required value={{ request.form['inputQ'] }}>
                     &emsp;  Must fill
                     <br>&emsp;&emsp;
                     <input type="checkbox" id="inconsistent" name="inconsistent" value="True" checked onclick="inconsistent_click()">
@@ -55,7 +65,7 @@
                     <br>
                     <!-- evidenza -->
                     <label for="inputEv"> Evidence </label>
-                    <input style="width: 250px;" type="text" id="inputEv" name="inputEv" placeholder="string" onchange="ToggleLevel_1()" value={{ request.form['inputEv'] }}>
+                    <input style="width: 250px;" type="text" id="inputEv" name="inputEv" placeholder="Evidence" onchange="ToggleLevel_1()" value={{ request.form['inputEv'] }}>
                     &emsp;  Optional for -Exact Inference- and -Approximate Inference-
                     <br><br>
 
@@ -67,7 +77,7 @@
                     <label style="font-weight: bold;" class="label-inline" for="AppInf"> Approximate Inference </label><br>
                         <!-- checkboxes for Approximate Inference -->
                         &emsp;&emsp;&emsp;
-                        <label class="label-inline" for="nSamples"> n Samples (int) </label>&emsp;   
+                        <label class="label-inline" for="nSamples"> Number of Samples (int) </label>&emsp;   
                         <input style="width: 150px;" type="text" id="nSamples" name="nSamples" value="1000" disabled="true"><br>
                         &emsp;&emsp;&emsp;
                         <input type="radio" id="RjS" name="AI_options" value="rejection" disabled="true" onclick="ToggleLevel_2()">
@@ -78,7 +88,7 @@
                         &emsp;&emsp;&emsp;
                         <input type="radio" id="GS" name="AI_options" value="gibbs" disabled="true" onclick="ToggleLevel_2()">
                         <label class="label-inline" for="GS"> Gibbs Sampling </label><br> &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-                        <label class="label-inline" for="Blocks"> blocks (int) </label>&emsp;
+                        <label class="label-inline" for="Blocks"> Blocks (int) </label>&emsp;
                         <input style="width: 150px;" type="text" id="Blocks" name="Blocks" placeholder="int" disabled="true" value="{{ request.form['Blocks'] }}">
 
                         <br>
@@ -87,7 +97,7 @@
                     <input type="radio" id="MapInf" name="options" value="Map Inference" onclick="ToggleLevel_1()">
                     <label style="font-weight: bold;" class="label-inline" for="MapInf"> Map Inference </label> &emsp;&emsp;&emsp;&emsp;
                     <input type="checkbox" id="Upper" name="Upper" value="False" onclick="upper_click()">
-                    <label class="label-inline" for="Upper" id="up_label"> upper [False] </label>
+                    <label class="label-inline" for="Upper" id="up_label"> Upper </label>
                     <br>
 
                     <input type="radio" id="Abd" name="options" value="Abduction" onclick="ToggleLevel_1()">
