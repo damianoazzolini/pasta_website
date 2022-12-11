@@ -70,6 +70,8 @@ optional for debug/programming purpose:
 flask --app pasta_website/main_interface --debug run
 ```
 At this point your server will be running at standard ip/port 127.0.0.1:5000 (standard for flask applications). You can add `--host <ip>` to run the app on another ip.
+
+NOTE: check that the path pointing to the pasta module is correct. In this case you shuld use `Line 9` of `main_interface.py` file
 <br />
 
 ## Create a Docker image
@@ -95,3 +97,49 @@ and start the Server (locally)
 mod_wsgi-express start-server wsgi.py --processes 4
 ```
 see https://flask.palletsprojects.com/en/2.2.x/deploying/mod_wsgi/ for more details and how to run the server on port 80.
+
+if you modify your `apache2.conf` file properly you can also run apache with
+```
+service apache start
+```
+just add the following lines on the file:
+```
+<VirtualHost *:80>
+
+    ServerName localhost
+    ServerAlias localhost
+    ServerAdmin <your contact>
+
+    DocumentRoot <your path to the "pasta_website/pasta_website" folder>
+
+    <Directory <your path to the "pasta_website/pasta_website" folder> >
+    <IfVersion < 2.4>
+        Order allow,deny
+        Allow from all
+    </IfVersion>
+    <IfVersion >= 2.4>
+        Require all granted
+    </IfVersion>
+    </Directory>
+
+    WSGIDaemonProcess FlaskApp python-path=<your path to the "pasta_website" folder>:<your path to the "pasta_website" folder>/venv/lib/python3.8/site-packages
+    WSGIProcessGroup FlaskApp
+    WSGIScriptAlias /pastawebsite <your path to the "pasta_website" folder>/wsgi.py
+
+    <Directory <your path to the "pasta_website" folder>>
+    <IfVersion < 2.4>
+        Order allow,deny
+        Allow from all
+    </IfVersion>
+    <IfVersion >= 2.4>
+        Require all granted
+    </IfVersion>
+    </Directory>
+
+</VirtualHost>
+```
+-all paths has to be actual paths-
+
+NOTE: check that the path pointing to the pasta module is correct. In this case you shuld use `Line 8` of `main_interface.py` file
+
+There might be some issues with lines 48-49 in `main_interface.py`. Those lines will be deleted soon but in the meantime you can just comment those and run the server without the Parameter Learning option.
